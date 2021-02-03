@@ -10,7 +10,7 @@
 
 
 Scanner::Scanner(std::string fileName)
-    : fileName(fileName), line(1) {
+    : fileName(fileName), line(1), col(1) {
     this->inFile.open(fileName, std::ios::binary);
     if (!this->inFile.is_open()) {
         std::cerr << "Failed to open file '" << fileName << "'" << std::endl;
@@ -24,29 +24,35 @@ Scanner::~Scanner() {
 
 Token Scanner::GetNextToken() {
     StateMachine sm = StateMachine();
-    MachineState state = START_STATE;
+    MachineState state;
     char next;
     TokenType type;
     std::string lexeme = "";
-    while (state != CANTMOVE_STATE && !this->inFile.eof()) {
+    do {
         // Get next char
         next = this->inFile.get();
         // LOG("next char: " + next);
         state = sm.UpdateState(next, type);
         lexeme += next;
+        this->col++;
+        // Check for tabs
+        if (next == '\t') {
+            std::cout << "I AM A BITCH" << std::endl;
+        }
+        // No changes while in start state
         if (state == START_STATE) {
             lexeme = "";
         }
         // Increment lines
         if (next == '\n' && state != CANTMOVE_STATE) {
             this->line++;
+            this->col = 1;
         }
-    }
-    if (this->inFile.eof()) {
-        type = ENDFILE_TOKEN;
-    }
+    } while (state != CANTMOVE_STATE);
+
     // Put back last read character in (will be start of next token)
     this->inFile.unget();
+    this->col--;
     lexeme.pop_back();
 
     if (type == BAD_TOKEN) {
@@ -55,7 +61,7 @@ Token Scanner::GetNextToken() {
     }
 
 
-    Token tok = Token(type, lexeme);
+    Token tok = Token(type, lexeme, this->GetFileName(), this->line, this->col - lexeme.length());
     LOG("type #: " + tok.GetTokenType());
     LOG("before check reserved: " + tok.GetTokenTypeName());
     tok.CheckReserved();
@@ -73,7 +79,7 @@ int Scanner::GetLineNumber() const {
 
 std::ostream& operator <<(std::ostream& out, const Scanner& s) {
     std::stringstream ss;
-    ss << s.GetFileName() << ":" << s.GetLineNumber() << ": ";
+    ss << s.GetFileName() << ":" << s.GetLineNumber() << ":" << s.col << ": ";
     out.setf(std::ios::left);
     out << "\e[1m" << std::setw(s.GetFileName().length() + 8) << ss.str() << "\e[0m";
     return out;

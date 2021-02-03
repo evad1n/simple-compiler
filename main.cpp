@@ -17,7 +17,7 @@ void scanFile(std::string fileName) {
     Token t;
     do {
         t = scanner.GetNextToken();
-        std::cout << scanner << t << std::endl;
+        std::cout << t << std::endl;
     } while (t.GetTokenType() != ENDFILE_TOKEN);
 }
 

@@ -18,6 +18,8 @@ public:
     Token GetNextToken();
     std::string GetFileName() const;
     int GetLineNumber() const;
+
+    int col;
 };
 
 // Outputs file name, line number, and column number

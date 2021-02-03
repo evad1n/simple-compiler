@@ -18,7 +18,7 @@ log: logging
 logging:
 	g++ -g -D LOGGING *.cpp -o $(NAME).exe
 	
-gdb: 
+debug: 
 	g++ -g *.cpp -o $(NAME).exe
 
 clean:

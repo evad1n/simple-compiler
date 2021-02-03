@@ -4,8 +4,8 @@
 
 StateMachine::StateMachine()
     : currentState(START_STATE) {
-    // First, initialize all the mLegalMoves to CANTMOVE_STATE
-    // Then, reset the mLegalMoves that are legitimate 
+    // First, initialize all the legalMoves to CANTMOVE_STATE
+    // Then, reset the legalMoves that are legitimate 
     for (int i = 0; i < LAST_STATE; i++) {
         for (int j = 0; j < LAST_CHAR; j++) {
             this->legalMoves[i][j] = CANTMOVE_STATE;
@@ -60,6 +60,7 @@ StateMachine::StateMachine()
     this->legalMoves[INTEGER_STATE][DIGIT_CHAR] = INTEGER_STATE;
     this->legalMoves[IDENTIFIER_STATE][DIGIT_CHAR] = IDENTIFIER_STATE;
     this->legalMoves[IDENTIFIER_STATE][LETTER_CHAR] = IDENTIFIER_STATE;
+    this->legalMoves[START_STATE][ENDFILE_CHAR] = ENDFILE_STATE;
 
 
     // First, initialize all states to correspond to the BAD token type.
@@ -88,6 +89,7 @@ StateMachine::StateMachine()
     this->correspondingTokenTypes[INSERTION_STATE] = INSERTION_TOKEN;
     this->correspondingTokenTypes[EXTRACTION_STATE] = EXTRACTION_TOKEN;
     this->correspondingTokenTypes[SEMICOLON_STATE] = SEMICOLON_TOKEN;
+    this->correspondingTokenTypes[ENDFILE_STATE] = ENDFILE_TOKEN;
 }
 
 MachineState StateMachine::UpdateState(char currentCharacter, TokenType& correspondingTokenType) {
@@ -129,8 +131,8 @@ MachineState StateMachine::UpdateState(char currentCharacter, TokenType& corresp
         charType = BANG_CHAR;
     else if (currentCharacter == ';')
         charType = SEMICOLON_CHAR;
-    else
-        charType = BAD_CHAR;
+    else if (currentCharacter == EOF)
+        charType = ENDFILE_CHAR;
 
     // Update current state and token
     correspondingTokenType = this->correspondingTokenTypes[this->currentState];

@@ -26,13 +26,16 @@ const std::string& Token::GetTokenTypeName(TokenType type) {
     return gTokenTypeNames[type];
 }
 
-Token::Token() {
-
-}
+Token::Token() {}
 
 
 Token::Token(TokenType type, const std::string& lexeme)
-    : type(type), lexeme(lexeme) {
+    : type(type), lexeme(lexeme), fileName(""), line(1), col(1) {
+
+}
+
+Token::Token(TokenType type, const std::string& lexeme, std::string fileName, int line, int col)
+    : type(type), lexeme(lexeme), fileName(fileName), line(line), col(col) {
 
 }
 
@@ -61,10 +64,20 @@ void Token::CheckReserved() {
 }
 
 std::ostream& operator <<(std::ostream& out, const Token& tc) {
-    out.setf(std::ios::left);
-    out << "Type: " <<
-        "\e[34m" << std::setw(15) << tc.GetTokenTypeName() << "\e[0m" <<
-        "Lexeme: " <<
-        "\e[32m" << std::setw(15) << tc.GetLexeme() << "\e[0m";
+    out << tc.ToString();
     return out;
+}
+
+std::string Token::ToString() const {
+    std::stringstream ctx;
+    ctx << this->fileName << ":" << this->line << ":" << this->col << ": ";
+    std::stringstream ss;
+    ss.setf(std::ios::left);
+    // std::cout << this->fileName.length() << std::endl;
+    ss << "\e[1m" << std::setw(this->fileName.length() + 10) << ctx.str() << "\e[0m";
+    ss << "Type: " <<
+        "\e[34m" << std::setw(15) << this->GetTokenTypeName() << "\e[0m" <<
+        "Lexeme: " <<
+        "\e[32m" << std::setw(15) << this->lexeme << "\e[0m";
+    return ss.str();
 }
