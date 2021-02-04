@@ -28,20 +28,15 @@ const std::string& Token::GetTokenTypeName(TokenType type) {
 
 Token::Token() {}
 
-
 Token::Token(TokenType type, const std::string& lexeme)
     : type(type), lexeme(lexeme), fileName(""), line(1), col(1) {
 
 }
 
 Token::Token(TokenType type, const std::string& lexeme, std::string fileName, int line, int col)
-    : type(type), lexeme(lexeme), fileName(fileName), line(line), col(col) {
+    : type(type), lexeme(lexeme), fileName(fileName), line(line), col(col) {}
 
-}
-
-Token::~Token() {
-
-}
+Token::~Token() {}
 
 const std::string& Token::GetTokenTypeName() const {
     return gTokenTypeNames[this->type];

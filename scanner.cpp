@@ -37,7 +37,7 @@ Token Scanner::GetNextToken() {
         this->col++;
         // Check for tabs
         if (next == '\t') {
-            std::cout << "I AM A BITCH" << std::endl;
+            this->col += 3;
         }
         // No changes while in start state
         if (state == START_STATE) {
