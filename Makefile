@@ -13,7 +13,7 @@ compiler:
 	g++ *.cpp -o $(NAME).exe
 
 log: logging
-	./$(NAME).exe
+	./$(NAME).exe	
 
 logging:
 	g++ -g -D LOGGING *.cpp -o $(NAME).exe

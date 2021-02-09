@@ -2,6 +2,7 @@
 #include "log.h"
 #include "token.h"
 #include "scanner.h"
+#include "node.h"
 
 void testTokens() {
     TokenType tt = IDENTIFIER_TOKEN;
@@ -10,6 +11,22 @@ void testTokens() {
     std::cout << tok1 << std::endl;
     tok1.CheckReserved();
     std::cout << tok1 << std::endl;
+}
+
+void testNodes() {
+    StartNode* start = new StartNode(new ProgramNode(new BlockNode(new StatementGroupNode())));
+    std::cout << "deleting start" << std::endl;
+    delete start;
+
+    PlusNode* plus = new PlusNode(new IntegerNode(40), new IntegerNode(50));
+    std::cout << plus->Evaluate() << std::endl;
+    std::cout << "deleting plusNode" << std::endl;
+    delete plus;
+
+    LessEqualNode* lte = new LessEqualNode(new IntegerNode(40), new IntegerNode(50));
+    std::cout << lte->Evaluate() << std::endl;
+    std::cout << "deleting lessEqualNode" << std::endl;
+    delete lte;
 }
 
 void scanFile(std::string fileName) {
@@ -21,6 +38,10 @@ void scanFile(std::string fileName) {
     } while (t.GetTokenType() != ENDFILE_TOKEN);
 }
 
+int dog() {
+    return 5;
+}
+
 int main(int argc, char const* argv[]) {
     LOG("LOGGING");
     if (argc < 2) {
@@ -30,5 +51,6 @@ int main(int argc, char const* argv[]) {
             scanFile(argv[i]);
         }
     }
+    // testNodes();
     // testTokens();
 }

@@ -100,9 +100,76 @@ BinaryOperatorNode::~BinaryOperatorNode() {
     delete right;
 }
 
+// Mathematical operators
+
 PlusNode::PlusNode(ExpressionNode* left, ExpressionNode* right)
     : BinaryOperatorNode(left, right) {}
 
 int PlusNode::Evaluate() {
     return this->left->Evaluate() + this->right->Evaluate();
+}
+
+MinusNode::MinusNode(ExpressionNode* left, ExpressionNode* right)
+    : BinaryOperatorNode(left, right) {}
+
+int MinusNode::Evaluate() {
+    return this->left->Evaluate() - this->right->Evaluate();
+}
+
+TimesNode::TimesNode(ExpressionNode* left, ExpressionNode* right)
+    : BinaryOperatorNode(left, right) {}
+
+int TimesNode::Evaluate() {
+    return this->left->Evaluate() * this->right->Evaluate();
+}
+
+DivideNode::DivideNode(ExpressionNode* left, ExpressionNode* right)
+    : BinaryOperatorNode(left, right) {}
+
+int DivideNode::Evaluate() {
+    return this->left->Evaluate() / this->right->Evaluate();
+}
+
+// Relational operators
+
+LessNode::LessNode(ExpressionNode* left, ExpressionNode* right)
+    : BinaryOperatorNode(left, right) {}
+
+int LessNode::Evaluate() {
+    return this->left->Evaluate() < this->right->Evaluate();
+}
+
+LessEqualNode::LessEqualNode(ExpressionNode* left, ExpressionNode* right)
+    : BinaryOperatorNode(left, right) {}
+
+int LessEqualNode::Evaluate() {
+    return this->left->Evaluate() <= this->right->Evaluate();
+}
+
+GreaterNode::GreaterNode(ExpressionNode* left, ExpressionNode* right)
+    : BinaryOperatorNode(left, right) {}
+
+int GreaterNode::Evaluate() {
+    return this->left->Evaluate() > this->right->Evaluate();
+}
+
+GreaterEqualNode::GreaterEqualNode(ExpressionNode* left, ExpressionNode* right)
+    : BinaryOperatorNode(left, right) {}
+
+int GreaterEqualNode::Evaluate() {
+    return this->left->Evaluate() >= this->right->Evaluate();
+}
+
+EqualNode::EqualNode(ExpressionNode* left, ExpressionNode* right)
+    : BinaryOperatorNode(left, right) {}
+
+int EqualNode::Evaluate() {
+    return this->left->Evaluate() == this->right->Evaluate();
+}
+
+NotEqualNode::NotEqualNode(ExpressionNode* left, ExpressionNode* right)
+    : BinaryOperatorNode(left, right) {}
+
+int NotEqualNode::Evaluate() {
+    return this->left->Evaluate() != this->right->Evaluate();
 }

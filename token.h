@@ -43,9 +43,10 @@ public:
 
     // If this lexeme is one of the reserved words, then assign it that token
     void CheckReserved();
+
+    // Outputs token type, name, and lexeme, along with file location info
+    friend std::ostream& operator <<(std::ostream& out, const Token& tc);
 };
 
-// Outputs token type, name, and lexeme
-std::ostream& operator <<(std::ostream& out, const Token& tc);
 
 #endif // TOKEN_H

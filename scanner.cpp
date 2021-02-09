@@ -69,6 +69,19 @@ Token Scanner::GetNextToken() {
     return tok;
 }
 
+Token Scanner::PeekNextToken() {
+    std::streampos pos = this->inFile.tellg();
+    int line = this->line;
+    int col = this->col;
+    Token t = this->GetNextToken();
+    if (!this->inFile) {
+        this->inFile.clear();
+    }
+    this->inFile.seekg(pos);
+    this->line = line;
+    this->col = col;
+}
+
 std::string Scanner::GetFileName() const {
     return this->fileName;
 }
@@ -79,8 +92,8 @@ int Scanner::GetLineNumber() const {
 
 std::ostream& operator <<(std::ostream& out, const Scanner& s) {
     std::stringstream ss;
-    ss << s.GetFileName() << ":" << s.GetLineNumber() << ":" << s.col << ": ";
+    ss << s.fileName << ":" << s.line << ":" << s.col << ": ";
     out.setf(std::ios::left);
-    out << "\e[1m" << std::setw(s.GetFileName().length() + 8) << ss.str() << "\e[0m";
+    out << "\e[1m" << std::setw(s.fileName.length() + 8) << ss.str() << "\e[0m";
     return out;
 }

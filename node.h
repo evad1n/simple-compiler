@@ -8,9 +8,9 @@
 class Node;
 class StartNode;
 class ProgramNode;
+class StatementNode;
 class BlockNode;
 class StatementGroupNode;
-class StatementNode;
 class DeclarationStatementNode;
 class AssignmentStatementNode;
 class CoutStatementNode;
@@ -18,8 +18,20 @@ class CoutStatementNode;
 class ExpressionNode;
 class IntegerNode;
 class IdentifierNode;
+
 class BinaryOperatorNode;
 class PlusNode;
+class MinusNode;
+class TimesNode;
+class DividesNode;
+
+class LessNode;
+class LessEqualNode;
+class GreaterNode;
+class GreaterEqualNode;
+class EqualNode;
+class NotEqualNode;
+
 
 class Node {
 public:
@@ -42,7 +54,13 @@ public:
     ~ProgramNode();
 };
 
-class BlockNode : public Node {
+class StatementNode : public Node {
+private:
+
+public:
+};
+
+class BlockNode : public StatementNode {
 private:
     StatementGroupNode* sgNode;
 public:
@@ -60,11 +78,6 @@ public:
     void AddStatement(StatementNode* node);
 };
 
-class StatementNode : public Node {
-private:
-
-public:
-};
 
 class DeclarationStatementNode : public StatementNode {
 private:
@@ -128,11 +141,82 @@ public:
     ~BinaryOperatorNode();
 };
 
+// Mathematical operators
+
 class PlusNode : public BinaryOperatorNode {
 private:
 
 public:
     PlusNode(ExpressionNode* left, ExpressionNode* right);
+    int Evaluate();
+};
+
+class MinusNode : public BinaryOperatorNode {
+private:
+
+public:
+    MinusNode(ExpressionNode* left, ExpressionNode* right);
+    int Evaluate();
+};
+
+class TimesNode : public BinaryOperatorNode {
+private:
+
+public:
+    TimesNode(ExpressionNode* left, ExpressionNode* right);
+    int Evaluate();
+};
+
+class DivideNode : public BinaryOperatorNode {
+private:
+
+public:
+    DivideNode(ExpressionNode* left, ExpressionNode* right);
+    int Evaluate();
+};
+
+// Relational operators
+
+class LessNode : public BinaryOperatorNode {
+private:
+
+public:
+    LessNode(ExpressionNode* left, ExpressionNode* right);
+    int Evaluate();
+};
+class LessEqualNode : public BinaryOperatorNode {
+private:
+
+public:
+    LessEqualNode(ExpressionNode* left, ExpressionNode* right);
+    int Evaluate();
+};
+class GreaterNode : public BinaryOperatorNode {
+private:
+
+public:
+    GreaterNode(ExpressionNode* left, ExpressionNode* right);
+    int Evaluate();
+};
+class GreaterEqualNode : public BinaryOperatorNode {
+private:
+
+public:
+    GreaterEqualNode(ExpressionNode* left, ExpressionNode* right);
+    int Evaluate();
+};
+class EqualNode : public BinaryOperatorNode {
+private:
+
+public:
+    EqualNode(ExpressionNode* left, ExpressionNode* right);
+    int Evaluate();
+};
+class NotEqualNode : public BinaryOperatorNode {
+private:
+
+public:
+    NotEqualNode(ExpressionNode* left, ExpressionNode* right);
     int Evaluate();
 };
 
