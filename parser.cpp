@@ -77,11 +77,29 @@ StatementNode* Parser::Statement() {
 }
 
 
+
 DeclarationStatementNode* Parser::DeclarationStatement() {
     this->Match(INT_TOKEN);
     IdentifierNode* in = this->Identifier();
-    this->Match(SEMICOLON_TOKEN);
-    return new DeclarationStatementNode(in);
+    // Optional assignment at same time
+    Token t = this->scanner->PeekNextToken();
+    TokenType tt = t.GetTokenType();
+    switch (tt) {
+    case SEMICOLON_TOKEN:
+        this->Match(tt);
+        return new DeclarationStatementNode(in);
+    case ASSIGNMENT_TOKEN:
+    {
+        this->Match(tt);
+        ExpressionNode* en = this->Expression();
+        this->Match(SEMICOLON_TOKEN);
+        return new DeclarationAssignmentStatementNode(in, en);
+    }
+    default:
+        std::cerr << "Error: invalid declaration: " << t << std::endl;
+        break;
+    }
+    return NULL;
 }
 
 AssignmentStatementNode* Parser::AssignmentStatement() {
@@ -113,7 +131,7 @@ WhileStatementNode* Parser::WhileStatement() {
 ForStatementNode* Parser::ForStatement() {
     this->Match(FOR_TOKEN);
     this->Match(LEFT_PAREN_TOKEN);
-    AssignmentStatementNode* initializer = this->AssignmentStatement();
+    StatementNode* initializer = this->Statement();
     ExpressionNode* comparison = this->Expression();
     this->Match(SEMICOLON_TOKEN);
     IdentifierNode* in = this->Identifier();
@@ -128,7 +146,7 @@ ForStatementNode* Parser::ForStatement() {
 ForeStatementNode* Parser::ForeStatement() {
     this->Match(FORE_TOKEN);
     this->Match(LEFT_PAREN_TOKEN);
-    AssignmentStatementNode* initializer = this->AssignmentStatement();
+    StatementNode* initializer = this->Statement();
     ExpressionNode* comparison = this->Expression();
     this->Match(SEMICOLON_TOKEN);
     IdentifierNode* in = this->Identifier();

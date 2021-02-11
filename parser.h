@@ -19,6 +19,7 @@ private:
     StatementNode* Statement();
     // Statements
     DeclarationStatementNode* DeclarationStatement();
+    DeclarationAssignmentStatementNode* DeclarationAssignmentStatement();
     AssignmentStatementNode* AssignmentStatement();
     IfStatementNode* IfStatement();
     WhileStatementNode* WhileStatement();

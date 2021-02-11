@@ -55,15 +55,26 @@ void DeclarationStatementNode::Interpret() {
     this->IDNode->DeclareVariable();
 }
 
+DeclarationAssignmentStatementNode::DeclarationAssignmentStatementNode(IdentifierNode* in, ExpressionNode* en)
+    : DeclarationStatementNode(in), expNode(en) {}
+DeclarationAssignmentStatementNode::~DeclarationAssignmentStatementNode() {
+    delete this->expNode;
+}
+void DeclarationAssignmentStatementNode::Interpret() {
+    this->IDNode->DeclareVariable();
+    int val = this->expNode->Evaluate();
+    this->IDNode->SetValue(val);
+}
+
 AssignmentStatementNode::AssignmentStatementNode(IdentifierNode* in, ExpressionNode* en)
-    : idNode(in), expNode(en) {}
+    : IDNode(in), expNode(en) {}
 AssignmentStatementNode::~AssignmentStatementNode() {
-    delete this->idNode;
+    delete this->IDNode;
     delete this->expNode;
 }
 void AssignmentStatementNode::Interpret() {
     int val = this->expNode->Evaluate();
-    this->idNode->SetValue(val);
+    this->IDNode->SetValue(val);
 }
 
 IfStatementNode::IfStatementNode(ExpressionNode* en, BlockNode* bn)
@@ -91,9 +102,9 @@ void WhileStatementNode::Interpret() {
 }
 
 ForStatementNode::ForStatementNode(
-    AssignmentStatementNode* initializer,
+    StatementNode* initializer,
     ExpressionNode* comparison,
-    AssignmentStatementNode* incrementer,
+    StatementNode* incrementer,
     BlockNode* bn)
     : initializer(initializer),
     comparison(comparison),
@@ -114,9 +125,9 @@ void ForStatementNode::Interpret() {
 }
 
 ForeStatementNode::ForeStatementNode(
-    AssignmentStatementNode* initializer,
+    StatementNode* initializer,
     ExpressionNode* comparison,
-    AssignmentStatementNode* incrementer,
+    StatementNode* incrementer,
     BlockNode* bn)
     : initializer(initializer),
     comparison(comparison),

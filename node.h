@@ -12,6 +12,7 @@ class StatementNode;
 class BlockNode;
 class StatementGroupNode;
 class DeclarationStatementNode;
+class DeclarationAssignmentStatementNode;
 class AssignmentStatementNode;
 class IfStatementNode;
 class WhileStatementNode;
@@ -92,7 +93,7 @@ public:
 
 
 class DeclarationStatementNode : public StatementNode {
-private:
+protected:
     IdentifierNode* IDNode;
 public:
     DeclarationStatementNode(IdentifierNode* in);
@@ -101,9 +102,19 @@ public:
     void Interpret();
 };
 
+class DeclarationAssignmentStatementNode : public DeclarationStatementNode {
+private:
+    ExpressionNode* expNode;
+public:
+    DeclarationAssignmentStatementNode(IdentifierNode* in, ExpressionNode* en);
+    ~DeclarationAssignmentStatementNode();
+
+    void Interpret();
+};
+
 class AssignmentStatementNode : public StatementNode {
 private:
-    IdentifierNode* idNode;
+    IdentifierNode* IDNode;
     ExpressionNode* expNode;
 public:
     AssignmentStatementNode(IdentifierNode* in, ExpressionNode* en);
@@ -111,6 +122,7 @@ public:
 
     void Interpret();
 };
+
 
 class IfStatementNode : public StatementNode {
 private:
@@ -136,15 +148,15 @@ public:
 
 class ForStatementNode : public StatementNode {
 private:
-    AssignmentStatementNode* initializer;
+    StatementNode* initializer;
     ExpressionNode* comparison;
-    AssignmentStatementNode* incrementer;
+    StatementNode* incrementer;
     BlockNode* blockNode;
 public:
     ForStatementNode(
-        AssignmentStatementNode* initializer,
+        StatementNode* initializer,
         ExpressionNode* comparison,
-        AssignmentStatementNode* incrementer,
+        StatementNode* incrementer,
         BlockNode* bn);
     ~ForStatementNode();
 
@@ -153,15 +165,15 @@ public:
 
 class ForeStatementNode : public StatementNode {
 private:
-    AssignmentStatementNode* initializer;
+    StatementNode* initializer;
     ExpressionNode* comparison;
-    AssignmentStatementNode* incrementer;
+    StatementNode* incrementer;
     BlockNode* blockNode;
 public:
     ForeStatementNode(
-        AssignmentStatementNode* initializer,
+        StatementNode* initializer,
         ExpressionNode* comparison,
-        AssignmentStatementNode* incrementer,
+        StatementNode* incrementer,
         BlockNode* bn);
     ~ForeStatementNode();
 
