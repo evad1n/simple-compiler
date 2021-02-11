@@ -36,6 +36,7 @@ class NotEqualNode;
 class Node {
 public:
     virtual ~Node();
+    virtual void Interpret() = 0;
 };
 
 class StartNode : public Node {
@@ -44,6 +45,8 @@ private:
 public:
     StartNode(ProgramNode* pn);
     ~StartNode();
+
+    void Interpret();
 };
 
 class ProgramNode : public Node {
@@ -52,6 +55,8 @@ private:
 public:
     ProgramNode(BlockNode* bn);
     ~ProgramNode();
+
+    void Interpret();
 };
 
 class StatementNode : public Node {
@@ -66,6 +71,8 @@ private:
 public:
     BlockNode(StatementGroupNode* sgn);
     ~BlockNode();
+
+    void Interpret();
 };
 
 class StatementGroupNode : public Node {
@@ -75,6 +82,7 @@ public:
     StatementGroupNode();
     ~StatementGroupNode();
 
+    void Interpret();
     void AddStatement(StatementNode* node);
 };
 
@@ -85,6 +93,8 @@ private:
 public:
     DeclarationStatementNode(IdentifierNode* in);
     ~DeclarationStatementNode();
+
+    void Interpret();
 };
 
 class AssignmentStatementNode : public StatementNode {
@@ -94,6 +104,17 @@ private:
 public:
     AssignmentStatementNode(ExpressionNode* en, IdentifierNode* in);
     ~AssignmentStatementNode();
+
+    void Interpret();
+};
+class CoutStatementNode : public StatementNode {
+private:
+    ExpressionNode* expNode;
+public:
+    CoutStatementNode(ExpressionNode* en);
+    ~CoutStatementNode();
+
+    void Interpret();
 };
 
 class ExpressionNode {
@@ -102,13 +123,6 @@ public:
     virtual int Evaluate() = 0;
 };
 
-class CoutStatementNode : public Node {
-private:
-    ExpressionNode* expNode;
-public:
-    CoutStatementNode(ExpressionNode* en);
-    ~CoutStatementNode();
-};
 
 class IntegerNode : public ExpressionNode {
 private:
@@ -123,7 +137,7 @@ private:
     std::string label;
     SymbolTable* table;
 public:
-    IdentifierNode(SymbolTable* symTable);
+    IdentifierNode(std::string label, SymbolTable* symTable);
     ~IdentifierNode();
 
     void DeclareVariable();

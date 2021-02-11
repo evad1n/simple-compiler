@@ -4,6 +4,7 @@
 #include "scanner.h"
 #include "symbol.h"
 #include "token.h"
+#include "node.h"
 
 class Parser {
 private:
@@ -12,28 +13,28 @@ private:
 
     Token Match(TokenType expected);
 
-    void Program();
-    void Block();
-    void StatementGroup();
-    bool Statement();
+    ProgramNode* Program();
+    BlockNode* Block();
+    StatementGroupNode* StatementGroup();
+    StatementNode* Statement();
     // Statements
-    void DeclarationStatement();
-    void AssignmentStatement();
-    void CoutStatement();
+    DeclarationStatementNode* DeclarationStatement();
+    AssignmentStatementNode* AssignmentStatement();
+    CoutStatementNode* CoutStatement();
 
-    void Expression();
-    void Relational();
-    void PlusMinus();
-    void TimesDivide();
-    void Factor();
+    ExpressionNode* Expression();
+    ExpressionNode* Relational();
+    ExpressionNode* PlusMinus();
+    ExpressionNode* TimesDivide();
+    ExpressionNode* Factor();
 
-    void Identifier();
-    void Integer();
+    IdentifierNode* Identifier();
+    IntegerNode* Integer();
 public:
     Parser(Scanner* scanner, SymbolTable* table);
     ~Parser();
 
-    void Start();
+    StartNode* Start();
 };
 
 

@@ -80,6 +80,8 @@ Token Scanner::PeekNextToken() {
     this->inFile.seekg(pos);
     this->line = line;
     this->col = col;
+
+    return t;
 }
 
 std::string Scanner::GetFileName() const {

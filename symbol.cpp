@@ -1,8 +1,9 @@
-#include <algorithm>
 #include <iostream>
+#include <vector>
 #include "symbol.h"
 
-SymbolTable::SymbolTable() {}
+SymbolTable::SymbolTable()
+    : variables(std::vector<Variable>{}) {}
 
 SymbolTable::~SymbolTable() {}
 

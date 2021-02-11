@@ -3,6 +3,8 @@
 #include "token.h"
 #include "scanner.h"
 #include "node.h"
+#include "symbol.h"
+#include "parser.h"
 
 void testTokens() {
     TokenType tt = IDENTIFIER_TOKEN;
@@ -29,7 +31,7 @@ void testNodes() {
     delete lte;
 }
 
-void scanFile(std::string fileName) {
+void printTokens(std::string fileName) {
     Scanner scanner(fileName);
     Token t;
     do {
@@ -38,8 +40,12 @@ void scanFile(std::string fileName) {
     } while (t.GetTokenType() != ENDFILE_TOKEN);
 }
 
-int dog() {
-    return 5;
+void compile(std::string fileName) {
+    Scanner* scanner = new Scanner(fileName);
+    SymbolTable* table = new SymbolTable();
+    Parser* parser = new Parser(scanner, table);
+    StartNode* start = parser->Start();
+    start->Interpret();
 }
 
 int main(int argc, char const* argv[]) {
@@ -48,7 +54,8 @@ int main(int argc, char const* argv[]) {
         std::cout << "No input files provided" << std::endl;
     } else {
         for (int i = 1; i < argc; i++) {
-            scanFile(argv[i]);
+            // printTokens(argv[i]);
+            compile(argv[1]);
         }
     }
     // testNodes();
