@@ -5,7 +5,7 @@
 #include "token.h"
 
 const std::string gTokenTypeNames[] = {
-    "VOID", "MAIN", "INT", "COUT", "RESERVED_COUNT",
+    "VOID", "MAIN", "INT", "COUT", "IF", "WHILE", "FOR", "FORE","RESERVED_COUNT",
     "LESS", "LESS_EQUAL", "GREATER", "GREATER_EQUAL", "EQUAL", "NOT_EQUAL",
     "INSERTION", "EXTRACTION", "ASSIGNMENT", "PLUS", "MINUS", "MULTIPLY", "DIVIDE", "NOT",
     "SEMICOLON", "LEFT_PAREN", "RIGHT_PAREN", "LEFT_BRACE", "RIGHT_BRACE",

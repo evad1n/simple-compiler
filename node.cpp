@@ -55,16 +55,89 @@ void DeclarationStatementNode::Interpret() {
     this->IDNode->DeclareVariable();
 }
 
-AssignmentStatementNode::AssignmentStatementNode(ExpressionNode* en, IdentifierNode* in)
-    : expNode(en), idNode(in) {}
+AssignmentStatementNode::AssignmentStatementNode(IdentifierNode* in, ExpressionNode* en)
+    : idNode(in), expNode(en) {}
 AssignmentStatementNode::~AssignmentStatementNode() {
-    delete this->expNode;
     delete this->idNode;
+    delete this->expNode;
 }
 void AssignmentStatementNode::Interpret() {
     int val = this->expNode->Evaluate();
     this->idNode->SetValue(val);
 }
+
+IfStatementNode::IfStatementNode(ExpressionNode* en, BlockNode* bn)
+    : expNode(en), blockNode(bn) {}
+IfStatementNode::~IfStatementNode() {
+    delete this->expNode;
+    delete this->blockNode;
+}
+void IfStatementNode::Interpret() {
+    if (this->expNode->Evaluate()) {
+        this->blockNode->Interpret();
+    }
+}
+
+WhileStatementNode::WhileStatementNode(ExpressionNode* en, BlockNode* bn)
+    : expNode(en), blockNode(bn) {}
+WhileStatementNode::~WhileStatementNode() {
+    delete this->expNode;
+    delete this->blockNode;
+}
+void WhileStatementNode::Interpret() {
+    while (this->expNode->Evaluate()) {
+        this->blockNode->Interpret();
+    }
+}
+
+ForStatementNode::ForStatementNode(
+    AssignmentStatementNode* initializer,
+    ExpressionNode* comparison,
+    AssignmentStatementNode* incrementer,
+    BlockNode* bn)
+    : initializer(initializer),
+    comparison(comparison),
+    incrementer(incrementer),
+    blockNode(bn) {}
+ForStatementNode::~ForStatementNode() {
+    delete this->initializer;
+    delete this->comparison;
+    delete this->incrementer;
+    delete this->blockNode;
+}
+void ForStatementNode::Interpret() {
+    this->initializer->Interpret();
+    while (this->comparison->Evaluate()) {
+        this->blockNode->Interpret();
+        this->incrementer->Interpret();
+    }
+}
+
+ForeStatementNode::ForeStatementNode(
+    AssignmentStatementNode* initializer,
+    ExpressionNode* comparison,
+    AssignmentStatementNode* incrementer,
+    BlockNode* bn)
+    : initializer(initializer),
+    comparison(comparison),
+    incrementer(incrementer),
+    blockNode(bn) {}
+ForeStatementNode::~ForeStatementNode() {
+    delete this->initializer;
+    delete this->comparison;
+    delete this->incrementer;
+    delete this->blockNode;
+}
+void ForeStatementNode::Interpret() {
+    this->initializer->Interpret();
+    while (this->comparison->Evaluate()) {
+        for (int i = 0; i < 4; i++) {
+            this->blockNode->Interpret();
+        }
+        this->incrementer->Interpret();
+    }
+}
+
 
 CoutStatementNode::CoutStatementNode(ExpressionNode* en)
     : expNode(en) {}

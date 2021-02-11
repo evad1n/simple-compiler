@@ -13,6 +13,10 @@ class BlockNode;
 class StatementGroupNode;
 class DeclarationStatementNode;
 class AssignmentStatementNode;
+class IfStatementNode;
+class WhileStatementNode;
+class ForStatementNode;
+class ForeStatementNode;
 class CoutStatementNode;
 
 class ExpressionNode;
@@ -99,14 +103,71 @@ public:
 
 class AssignmentStatementNode : public StatementNode {
 private:
-    ExpressionNode* expNode;
     IdentifierNode* idNode;
+    ExpressionNode* expNode;
 public:
-    AssignmentStatementNode(ExpressionNode* en, IdentifierNode* in);
+    AssignmentStatementNode(IdentifierNode* in, ExpressionNode* en);
     ~AssignmentStatementNode();
 
     void Interpret();
 };
+
+class IfStatementNode : public StatementNode {
+private:
+    ExpressionNode* expNode;
+    BlockNode* blockNode;
+public:
+    IfStatementNode(ExpressionNode* en, BlockNode* bn);
+    ~IfStatementNode();
+
+    void Interpret();
+};
+
+class WhileStatementNode : public StatementNode {
+private:
+    ExpressionNode* expNode;
+    BlockNode* blockNode;
+public:
+    WhileStatementNode(ExpressionNode* en, BlockNode* bn);
+    ~WhileStatementNode();
+
+    void Interpret();
+};
+
+class ForStatementNode : public StatementNode {
+private:
+    AssignmentStatementNode* initializer;
+    ExpressionNode* comparison;
+    AssignmentStatementNode* incrementer;
+    BlockNode* blockNode;
+public:
+    ForStatementNode(
+        AssignmentStatementNode* initializer,
+        ExpressionNode* comparison,
+        AssignmentStatementNode* incrementer,
+        BlockNode* bn);
+    ~ForStatementNode();
+
+    void Interpret();
+};
+
+class ForeStatementNode : public StatementNode {
+private:
+    AssignmentStatementNode* initializer;
+    ExpressionNode* comparison;
+    AssignmentStatementNode* incrementer;
+    BlockNode* blockNode;
+public:
+    ForeStatementNode(
+        AssignmentStatementNode* initializer,
+        ExpressionNode* comparison,
+        AssignmentStatementNode* incrementer,
+        BlockNode* bn);
+    ~ForeStatementNode();
+
+    void Interpret();
+};
+
 class CoutStatementNode : public StatementNode {
 private:
     ExpressionNode* expNode;

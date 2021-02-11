@@ -7,16 +7,16 @@ Parser::Parser(Scanner* scanner, SymbolTable* table)
 Parser::~Parser() {}
 
 Token Parser::Match(TokenType expected) {
-    Token curr = this->scanner->GetNextToken();
-    if (curr.GetTokenType() != expected) {
+    Token t = this->scanner->GetNextToken();
+    if (t.GetTokenType() != expected) {
         std::cerr << "Error in parser match. " << std::endl;
         std::cerr << "Expected token type " <<
             Token::GetTokenTypeName(expected) <<
-            ", but got type " << curr.GetTokenTypeName() << std::endl;
+            ", but got type " << t.GetTokenTypeName() << ": " << t << std::endl;
         exit(1);
     }
 
-    return curr;
+    return t;
 }
 
 StartNode* Parser::Start() {
@@ -62,6 +62,14 @@ StatementNode* Parser::Statement() {
         return this->DeclarationStatement();
     case IDENTIFIER_TOKEN:
         return this->AssignmentStatement();
+    case IF_TOKEN:
+        return this->IfStatement();
+    case WHILE_TOKEN:
+        return this->WhileStatement();
+    case FOR_TOKEN:
+        return this->ForStatement();
+    case FORE_TOKEN:
+        return this->ForeStatement();
     case COUT_TOKEN:
         return this->CoutStatement();
     }
@@ -81,7 +89,55 @@ AssignmentStatementNode* Parser::AssignmentStatement() {
     this->Match(ASSIGNMENT_TOKEN);
     ExpressionNode* en = this->Expression();
     this->Match(SEMICOLON_TOKEN);
-    return new AssignmentStatementNode(en, in);
+    return new AssignmentStatementNode(in, en);
+}
+
+IfStatementNode* Parser::IfStatement() {
+    this->Match(IF_TOKEN);
+    this->Match(LEFT_PAREN_TOKEN);
+    ExpressionNode* en = this->Expression();
+    this->Match(RIGHT_PAREN_TOKEN);
+    BlockNode* bn = this->Block();
+    return new IfStatementNode(en, bn);
+}
+
+WhileStatementNode* Parser::WhileStatement() {
+    this->Match(WHILE_TOKEN);
+    this->Match(LEFT_PAREN_TOKEN);
+    ExpressionNode* en = this->Expression();
+    this->Match(RIGHT_PAREN_TOKEN);
+    BlockNode* bn = this->Block();
+    return new WhileStatementNode(en, bn);
+}
+
+ForStatementNode* Parser::ForStatement() {
+    this->Match(FOR_TOKEN);
+    this->Match(LEFT_PAREN_TOKEN);
+    AssignmentStatementNode* initializer = this->AssignmentStatement();
+    ExpressionNode* comparison = this->Expression();
+    this->Match(SEMICOLON_TOKEN);
+    IdentifierNode* in = this->Identifier();
+    this->Match(ASSIGNMENT_TOKEN);
+    ExpressionNode* en = this->Expression();
+    AssignmentStatementNode* incrementer = new AssignmentStatementNode(in, en);
+    this->Match(RIGHT_PAREN_TOKEN);
+    BlockNode* bn = this->Block();
+    return new ForStatementNode(initializer, comparison, incrementer, bn);
+}
+
+ForeStatementNode* Parser::ForeStatement() {
+    this->Match(FORE_TOKEN);
+    this->Match(LEFT_PAREN_TOKEN);
+    AssignmentStatementNode* initializer = this->AssignmentStatement();
+    ExpressionNode* comparison = this->Expression();
+    this->Match(SEMICOLON_TOKEN);
+    IdentifierNode* in = this->Identifier();
+    this->Match(ASSIGNMENT_TOKEN);
+    ExpressionNode* en = this->Expression();
+    AssignmentStatementNode* incrementer = new AssignmentStatementNode(in, en);
+    this->Match(RIGHT_PAREN_TOKEN);
+    BlockNode* bn = this->Block();
+    return new ForeStatementNode(initializer, comparison, incrementer, bn);
 }
 
 CoutStatementNode* Parser::CoutStatement() {

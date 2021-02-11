@@ -40,12 +40,11 @@ void printTokens(std::string fileName) {
     } while (t.GetTokenType() != ENDFILE_TOKEN);
 }
 
-void compile(std::string fileName) {
+void interpret(std::string fileName) {
     Scanner* scanner = new Scanner(fileName);
     SymbolTable* table = new SymbolTable();
     Parser* parser = new Parser(scanner, table);
-    StartNode* start = parser->Start();
-    start->Interpret();
+    parser->Start()->Interpret();
 }
 
 int main(int argc, char const* argv[]) {
@@ -55,7 +54,7 @@ int main(int argc, char const* argv[]) {
     } else {
         for (int i = 1; i < argc; i++) {
             // printTokens(argv[i]);
-            compile(argv[1]);
+            interpret(argv[1]);
         }
     }
     // testNodes();

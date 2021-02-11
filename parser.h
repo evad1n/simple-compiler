@@ -20,6 +20,10 @@ private:
     // Statements
     DeclarationStatementNode* DeclarationStatement();
     AssignmentStatementNode* AssignmentStatement();
+    IfStatementNode* IfStatement();
+    WhileStatementNode* WhileStatement();
+    ForStatementNode* ForStatement();
+    ForeStatementNode* ForeStatement();
     CoutStatementNode* CoutStatement();
 
     ExpressionNode* Expression();
