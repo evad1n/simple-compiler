@@ -5,10 +5,21 @@
 #include "token.h"
 
 const std::string gTokenTypeNames[] = {
+    // Reserved words
     "VOID", "MAIN", "INT", "COUT", "IF", "WHILE", "FOR", "FORE","RESERVED_COUNT",
-    "LESS", "LESS_EQUAL", "GREATER", "GREATER_EQUAL", "EQUAL", "NOT_EQUAL",
-    "INSERTION", "EXTRACTION", "ASSIGNMENT", "PLUS", "MINUS", "MULTIPLY", "DIVIDE", "NOT",
-    "SEMICOLON", "LEFT_PAREN", "RIGHT_PAREN", "LEFT_BRACE", "RIGHT_BRACE",
+    // Scope tokens
+    "SEMICOLON",
+    "LEFT_PAREN", "RIGHT_PAREN",
+    "LEFT_BRACE", "RIGHT_BRACE",
+    // Relational tokens
+    "LESS", "LESS_EQUAL",
+    "GREATER", "GREATER_EQUAL",
+    "EQUAL", "NOT_EQUAL",
+    "BITWISE_AND", "BITWISE_OR",
+    "NOT", "AND", "OR",
+    "INSERTION", "EXTRACTION", "ASSIGNMENT",
+    "PLUS", "MINUS", "MULTIPLY", "DIVIDE",
+    // Other token types
     "IDENTIFIER", "INTEGER",
     "BAD", "END_FILE"
 };

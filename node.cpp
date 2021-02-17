@@ -173,9 +173,7 @@ int IntegerNode::Evaluate() {
 IdentifierNode::IdentifierNode(std::string label, SymbolTable* symTable)
     : label(label), table(symTable) {}
 
-IdentifierNode::~IdentifierNode() {
-    delete this->table;
-}
+IdentifierNode::~IdentifierNode() {}
 
 void IdentifierNode::DeclareVariable() {
     this->table->AddEntry(this->label);
@@ -273,4 +271,32 @@ NotEqualNode::NotEqualNode(ExpressionNode* left, ExpressionNode* right)
 
 int NotEqualNode::Evaluate() {
     return this->left->Evaluate() != this->right->Evaluate();
+}
+
+BitwiseAndNode::BitwiseAndNode(ExpressionNode* left, ExpressionNode* right)
+    : BinaryOperatorNode(left, right) {}
+
+int BitwiseAndNode::Evaluate() {
+    return this->left->Evaluate() & this->right->Evaluate();
+}
+
+BitwiseOrNode::BitwiseOrNode(ExpressionNode* left, ExpressionNode* right)
+    : BinaryOperatorNode(left, right) {}
+
+int BitwiseOrNode::Evaluate() {
+    return this->left->Evaluate() | this->right->Evaluate();
+}
+
+AndNode::AndNode(ExpressionNode* left, ExpressionNode* right)
+    : BinaryOperatorNode(left, right) {}
+
+int AndNode::Evaluate() {
+    return this->left->Evaluate() && this->right->Evaluate();
+}
+
+OrNode::OrNode(ExpressionNode* left, ExpressionNode* right)
+    : BinaryOperatorNode(left, right) {}
+
+int OrNode::Evaluate() {
+    return this->left->Evaluate() || this->right->Evaluate();
 }

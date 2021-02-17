@@ -4,7 +4,10 @@
 Parser::Parser(Scanner* scanner, SymbolTable* table)
     : scanner(scanner), table(table) {}
 
-Parser::~Parser() {}
+Parser::~Parser() {
+    delete this->scanner;
+    delete this->table;
+}
 
 Token Parser::Match(TokenType expected) {
     Token t = this->scanner->GetNextToken();
@@ -201,6 +204,22 @@ ExpressionNode* Parser::Relational() {
         this->Match(t);
         en = new NotEqualNode(en, this->PlusMinus());
         break;
+    case BITWISE_AND_TOKEN:
+        this->Match(t);
+        en = new BitwiseAndNode(en, this->PlusMinus());
+        break;
+    case BITWISE_OR_TOKEN:
+        this->Match(t);
+        en = new BitwiseOrNode(en, this->PlusMinus());
+        break;
+    case AND_TOKEN:
+        this->Match(t);
+        en = new AndNode(en, this->PlusMinus());
+        break;
+    case OR_TOKEN:
+        this->Match(t);
+        en = new OrNode(en, this->PlusMinus());
+        break;
     }
     return en;
 }
@@ -262,6 +281,7 @@ ExpressionNode* Parser::Factor() {
         break;
     default:
         std::cerr << "Error: expected factor type, got " << Token::GetTokenTypeName(t) << std::endl;
+        exit(EXIT_FAILURE);
     }
     return en;
 }
