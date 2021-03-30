@@ -4,22 +4,27 @@ CXXFLAGS=-Wall -Werror
 
 NAME=simple-compiler
 
+SOURCE= *.cpp nodes/*
+
 all: compiler
 
 run: compiler
-	./$(NAME).exe input.c
+	./$(NAME).exe sum.c
 
 compiler:
-	g++ *.cpp -o $(NAME).exe
+	g++ $(SOURCE) -o $(NAME).exe
 
 log: logging
 	./$(NAME).exe	
 
 logging:
-	g++ -g -D LOGGING *.cpp -o $(NAME).exe
+	g++ -g -D LOGGING $(SOURCE) -o $(NAME).exe
 	
 debug: 
-	g++ -g *.cpp -o $(NAME).exe
+	g++ -g $(SOURCE) -o $(NAME).exe
 
 clean:
 	rm -f *.o *.exe
+
+dry:
+	echo $(SOURCE)

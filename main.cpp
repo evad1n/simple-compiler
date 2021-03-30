@@ -2,7 +2,7 @@
 #include "log.h"
 #include "token.h"
 #include "scanner.h"
-#include "node.h"
+#include "nodes/node.h"
 #include "symbol.h"
 #include "parser.h"
 

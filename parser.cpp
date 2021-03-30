@@ -61,12 +61,12 @@ StatementGroupNode* Parser::StatementGroup() {
 StatementNode* Parser::Statement() {
     TokenType t = this->scanner->PeekNextToken().GetTokenType();
     switch (t) {
-    case INT_TOKEN:
+    case INT_TYPE_TOKEN:
         return this->DeclarationStatement();
     case IDENTIFIER_TOKEN:
         return this->AssignmentStatement();
     case IF_TOKEN:
-        return this->IfStatement();
+        return this->IfElseStatement();
     case WHILE_TOKEN:
         return this->WhileStatement();
     case FOR_TOKEN:
@@ -75,6 +75,8 @@ StatementNode* Parser::Statement() {
         return this->ForeStatement();
     case COUT_TOKEN:
         return this->CoutStatement();
+    case CIN_TOKEN:
+        return this->CinStatement();
     }
     return NULL;
 }
@@ -82,7 +84,7 @@ StatementNode* Parser::Statement() {
 
 
 DeclarationStatementNode* Parser::DeclarationStatement() {
-    this->Match(INT_TOKEN);
+    this->Match(INT_TYPE_TOKEN);
     IdentifierNode* in = this->Identifier();
     // Optional assignment at same time
     Token t = this->scanner->PeekNextToken();
@@ -105,21 +107,79 @@ DeclarationStatementNode* Parser::DeclarationStatement() {
     return NULL;
 }
 
-AssignmentStatementNode* Parser::AssignmentStatement() {
+StatementNode* Parser::AssignmentStatement() {
     IdentifierNode* in = this->Identifier();
-    this->Match(ASSIGNMENT_TOKEN);
-    ExpressionNode* en = this->Expression();
-    this->Match(SEMICOLON_TOKEN);
-    return new AssignmentStatementNode(in, en);
+    TokenType t = this->scanner->PeekNextToken().GetTokenType();
+    switch (t) {
+    case ASSIGNMENT_TOKEN:
+    {
+        this->Match(t);
+        ExpressionNode* en = this->Expression();
+        this->Match(SEMICOLON_TOKEN);
+        return new AssignmentStatementNode(in, en);
+    }
+    case PLUS_EQUALS_TOKEN:
+    {
+        this->Match(t);
+        ExpressionNode* en = this->Expression();
+        this->Match(SEMICOLON_TOKEN);
+        return new PlusEqualsStatementNode(in, en);
+    }
+    case MINUS_EQUALS_TOKEN:
+    {
+        this->Match(t);
+        ExpressionNode* en = this->Expression();
+        this->Match(SEMICOLON_TOKEN);
+        return new MinusEqualsStatementNode(in, en);
+    }
+    case MULTIPLY_EQUALS_TOKEN:
+    {
+        this->Match(t);
+        ExpressionNode* en = this->Expression();
+        this->Match(SEMICOLON_TOKEN);
+        return new MultiplyEqualsStatementNode(in, en);
+    }
+    case DIVIDE_EQUALS_TOKEN:
+    {
+        this->Match(t);
+        ExpressionNode* en = this->Expression();
+        this->Match(SEMICOLON_TOKEN);
+        return new DivideEqualsStatementNode(in, en);
+    }
+    case INCREMENT_TOKEN:
+    {
+        this->Match(t);
+        this->Match(SEMICOLON_TOKEN);
+        return new IncrementStatementNode(in);
+    }
+    case DECREMENT_TOKEN:
+    {
+        this->Match(t);
+        this->Match(SEMICOLON_TOKEN);
+        return new DecrementStatementNode(in);
+    }
+    default:
+        std::cerr << "Error: invalid assignment: " << t << std::endl;
+        break;
+    }
+    return NULL;
 }
 
-IfStatementNode* Parser::IfStatement() {
+IfElseStatementNode* Parser::IfElseStatement() {
     this->Match(IF_TOKEN);
     this->Match(LEFT_PAREN_TOKEN);
-    ExpressionNode* en = this->Expression();
+    ExpressionNode* ifExp = this->Expression();
     this->Match(RIGHT_PAREN_TOKEN);
-    BlockNode* bn = this->Block();
-    return new IfStatementNode(en, bn);
+    BlockNode* ifBlock = this->Block();
+    BlockNode* elseBlock;
+    if (this->scanner->PeekNextToken().GetTokenType() == ELSE_TOKEN) {
+        this->Match(ELSE_TOKEN);
+        if (this->scanner->PeekNextToken().GetTokenType() == IF_TOKEN) {
+            return new IfElseStatementNode(ifExp, ifBlock, this->IfElseStatement());
+        }
+        elseBlock = this->Block();
+    }
+    return new IfElseStatementNode(ifExp, ifBlock, elseBlock);
 }
 
 WhileStatementNode* Parser::WhileStatement() {
@@ -163,16 +223,98 @@ ForeStatementNode* Parser::ForeStatement() {
 
 CoutStatementNode* Parser::CoutStatement() {
     this->Match(COUT_TOKEN);
-    this->Match(INSERTION_TOKEN);
-    ExpressionNode* en = this->Expression();
+    std::vector<ExpressionNode*> ens;
+    do {
+        this->Match(INSERTION_TOKEN);
+        TokenType t = this->scanner->PeekNextToken().GetTokenType();
+        switch (t) {
+        case ENDL_TOKEN:
+            this->Match(t);
+            ens.push_back(NULL);
+            break;
+        default:
+            ens.push_back(this->Expression());
+            break;
+        }
+    } while (this->scanner->PeekNextToken().GetTokenType() == INSERTION_TOKEN);
     this->Match(SEMICOLON_TOKEN);
-    return new CoutStatementNode(en);
+    return new CoutStatementNode(ens);
+}
+
+CinStatementNode* Parser::CinStatement() {
+    this->Match(CIN_TOKEN);
+    std::vector<IdentifierNode*> ids;
+    do {
+        this->Match(EXTRACTION_TOKEN);
+        ids.push_back(this->Identifier());
+    } while (this->scanner->PeekNextToken().GetTokenType() == EXTRACTION_TOKEN);
+    this->Match(SEMICOLON_TOKEN);
+    return new CinStatementNode(ids);
 }
 
 // Expressions
 
 ExpressionNode* Parser::Expression() {
-    return this->Relational();
+    // Return lowest precedence operator first
+    // return this->Relational();
+    // return this->Exponent();
+    return this->Or();
+}
+
+ExpressionNode* Parser::Exponent() {
+    ExpressionNode* en = this->Factor();
+
+    for (;;) {
+        TokenType t = this->scanner->PeekNextToken().GetTokenType();
+        switch (t) {
+        case EXPONENT_TOKEN:
+            this->Match(t);
+            en = new ExponentNode(en, this->Factor());
+            break;
+        default:
+            return en;
+        }
+    }
+}
+
+ExpressionNode* Parser::TimesDivide() {
+    ExpressionNode* en = this->Exponent();
+
+    for (;;) {
+        TokenType t = this->scanner->PeekNextToken().GetTokenType();
+        switch (t) {
+        case MULTIPLY_TOKEN:
+            this->Match(t);
+            en = new TimesNode(en, this->Factor());
+            break;
+        case DIVIDE_TOKEN:
+            this->Match(t);
+            en = new DivideNode(en, this->Factor());
+            break;
+        default:
+            return en;
+        }
+    }
+}
+
+ExpressionNode* Parser::PlusMinus() {
+    ExpressionNode* en = this->TimesDivide();
+
+    for (;;) {
+        TokenType t = this->scanner->PeekNextToken().GetTokenType();
+        switch (t) {
+        case PLUS_TOKEN:
+            this->Match(t);
+            en = new PlusNode(en, this->TimesDivide());
+            break;
+        case MINUS_TOKEN:
+            this->Match(t);
+            en = new MinusNode(en, this->TimesDivide());
+            break;
+        default:
+            return en;
+        }
+    }
 }
 
 ExpressionNode* Parser::Relational() {
@@ -224,19 +366,15 @@ ExpressionNode* Parser::Relational() {
     return en;
 }
 
-ExpressionNode* Parser::PlusMinus() {
-    ExpressionNode* en = this->TimesDivide();
+ExpressionNode* Parser::And() {
+    ExpressionNode* en = this->Relational();
 
     for (;;) {
         TokenType t = this->scanner->PeekNextToken().GetTokenType();
         switch (t) {
-        case PLUS_TOKEN:
+        case AND_TOKEN:
             this->Match(t);
-            en = new PlusNode(en, this->TimesDivide());
-            break;
-        case MINUS_TOKEN:
-            this->Match(t);
-            en = new MinusNode(en, this->TimesDivide());
+            en = new AndNode(en, this->Factor());
             break;
         default:
             return en;
@@ -244,19 +382,15 @@ ExpressionNode* Parser::PlusMinus() {
     }
 }
 
-ExpressionNode* Parser::TimesDivide() {
-    ExpressionNode* en = this->Factor();
+ExpressionNode* Parser::Or() {
+    ExpressionNode* en = this->And();
 
     for (;;) {
         TokenType t = this->scanner->PeekNextToken().GetTokenType();
         switch (t) {
-        case MULTIPLY_TOKEN:
+        case OR_TOKEN:
             this->Match(t);
-            en = new TimesNode(en, this->Factor());
-            break;
-        case DIVIDE_TOKEN:
-            this->Match(t);
-            en = new DivideNode(en, this->Factor());
+            en = new OrNode(en, this->Factor());
             break;
         default:
             return en;

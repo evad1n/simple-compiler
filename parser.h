@@ -4,7 +4,7 @@
 #include "scanner.h"
 #include "symbol.h"
 #include "token.h"
-#include "node.h"
+#include "nodes/node.h"
 
 class Parser {
 private:
@@ -20,17 +20,21 @@ private:
     // Statements
     DeclarationStatementNode* DeclarationStatement();
     DeclarationAssignmentStatementNode* DeclarationAssignmentStatement();
-    AssignmentStatementNode* AssignmentStatement();
-    IfStatementNode* IfStatement();
+    StatementNode* AssignmentStatement();
+    IfElseStatementNode* IfElseStatement();
     WhileStatementNode* WhileStatement();
     ForStatementNode* ForStatement();
     ForeStatementNode* ForeStatement();
     CoutStatementNode* CoutStatement();
+    CinStatementNode* CinStatement();
 
     ExpressionNode* Expression();
-    ExpressionNode* Relational();
-    ExpressionNode* PlusMinus();
+    ExpressionNode* Exponent();
     ExpressionNode* TimesDivide();
+    ExpressionNode* PlusMinus();
+    ExpressionNode* Relational();
+    ExpressionNode* And();
+    ExpressionNode* Or();
     ExpressionNode* Factor();
 
     IdentifierNode* Identifier();

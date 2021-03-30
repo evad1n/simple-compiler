@@ -6,7 +6,7 @@
 
 const std::string gTokenTypeNames[] = {
     // Reserved words
-    "VOID", "MAIN", "INT", "COUT", "IF", "WHILE", "FOR", "FORE","RESERVED_COUNT",
+    "VOID", "MAIN", "INT", "COUT", "CIN", "ENDL", "IF", "ELSE", "WHILE", "FOR", "FORE","RESERVED_COUNT",
     // Scope tokens
     "SEMICOLON",
     "LEFT_PAREN", "RIGHT_PAREN",
@@ -17,8 +17,10 @@ const std::string gTokenTypeNames[] = {
     "EQUAL", "NOT_EQUAL",
     "BITWISE_AND", "BITWISE_OR",
     "NOT", "AND", "OR",
+    "PLUS", "MINUS", "MULTIPLY", "DIVIDE", "EXPONENT",
     "INSERTION", "EXTRACTION", "ASSIGNMENT",
-    "PLUS", "MINUS", "MULTIPLY", "DIVIDE",
+    "PLUS_EQUALS", "MINUS_EQUALS", "MULTIPLY_EQUALS", "DIVIDE_EQUALS",
+    "INCREMENT", "DECREMENT",
     // Other token types
     "IDENTIFIER", "INTEGER",
     "BAD", "END_FILE"
