@@ -1,4 +1,5 @@
 #include "base.h"
+#include "../symbol.h"
 
 Node::~Node() {}
 

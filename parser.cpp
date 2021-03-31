@@ -1,12 +1,17 @@
 #include <iostream>
 #include "parser.h"
 
-Parser::Parser(Scanner* scanner, SymbolTable* table)
-    : scanner(scanner), table(table) {}
+
+Parser::Parser(Scanner* scanner)
+    : scanner(scanner) {
+    SymbolTable* global = new SymbolTable();
+    this->scopes = std::vector<SymbolTable*>{ global };
+    this->scopeStack = std::vector<SymbolTable*>{ global };
+    this->currentScope = 0;
+}
 
 Parser::~Parser() {
     delete this->scanner;
-    delete this->table;
 }
 
 Token Parser::Match(TokenType expected) {
@@ -18,7 +23,6 @@ Token Parser::Match(TokenType expected) {
             ", but got type " << t.GetTokenTypeName() << ": " << t << std::endl;
         exit(1);
     }
-
     return t;
 }
 
@@ -39,7 +43,13 @@ ProgramNode* Parser::Program() {
 
 BlockNode* Parser::Block() {
     this->Match(LEFT_BRACE_TOKEN);
+    this->currentScope++;
+    SymbolTable* scope = new SymbolTable();
+    this->scopes.push_back(scope);
+    this->scopeStack.push_back(scope);
     StatementGroupNode* sgn = this->StatementGroup();
+    this->scopeStack.pop_back();
+    this->currentScope--;
     this->Match(RIGHT_BRACE_TOKEN);
     return new BlockNode(sgn);
 }
@@ -77,6 +87,8 @@ StatementNode* Parser::Statement() {
         return this->CoutStatement();
     case CIN_TOKEN:
         return this->CinStatement();
+    case LEFT_BRACE_TOKEN:
+        return this->Block();
     }
     return NULL;
 }
@@ -170,14 +182,24 @@ IfElseStatementNode* Parser::IfElseStatement() {
     this->Match(LEFT_PAREN_TOKEN);
     ExpressionNode* ifExp = this->Expression();
     this->Match(RIGHT_PAREN_TOKEN);
-    BlockNode* ifBlock = this->Block();
-    BlockNode* elseBlock;
+    StatementNode* ifBlock;
+    if (this->scanner->PeekNextToken().GetTokenType() == LEFT_BRACE_TOKEN) {
+        ifBlock = this->Block();
+    } else {
+        ifBlock = this->Statement();
+    }
+
+    StatementNode* elseBlock;
     if (this->scanner->PeekNextToken().GetTokenType() == ELSE_TOKEN) {
         this->Match(ELSE_TOKEN);
         if (this->scanner->PeekNextToken().GetTokenType() == IF_TOKEN) {
             return new IfElseStatementNode(ifExp, ifBlock, this->IfElseStatement());
         }
-        elseBlock = this->Block();
+        if (this->scanner->PeekNextToken().GetTokenType() == LEFT_BRACE_TOKEN) {
+            elseBlock = this->Block();
+        } else {
+            elseBlock = this->Statement();
+        }
     }
     return new IfElseStatementNode(ifExp, ifBlock, elseBlock);
 }
@@ -256,8 +278,6 @@ CinStatementNode* Parser::CinStatement() {
 
 ExpressionNode* Parser::Expression() {
     // Return lowest precedence operator first
-    // return this->Relational();
-    // return this->Exponent();
     return this->Or();
 }
 
@@ -422,7 +442,7 @@ ExpressionNode* Parser::Factor() {
 
 IdentifierNode* Parser::Identifier() {
     Token t = this->Match(IDENTIFIER_TOKEN);
-    return new IdentifierNode(t.GetLexeme(), this->table);
+    return new IdentifierNode(t.GetLexeme(), this->scopeStack[this->currentScope]);
 }
 
 IntegerNode* Parser::Integer() {

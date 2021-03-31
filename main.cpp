@@ -52,8 +52,7 @@ void machine() {
 
 void interpret(std::string fileName) {
     Scanner* scanner = new Scanner(fileName);
-    SymbolTable* table = new SymbolTable();
-    Parser* parser = new Parser(scanner, table);
+    Parser* parser = new Parser(scanner);
     parser->Start()->Interpret();
 }
 

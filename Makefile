@@ -9,7 +9,7 @@ SOURCE= *.cpp nodes/*
 all: compiler
 
 run: compiler
-	./$(NAME).exe sum.c
+	./$(NAME).exe inputs/scope.c
 
 compiler:
 	g++ $(SOURCE) -o $(NAME).exe

@@ -15,10 +15,10 @@ class CinStatementNode;
 class IfElseStatementNode : public StatementNode {
 private:
     ExpressionNode* ifExp;
-    BlockNode* ifBlock;
+    StatementNode* ifBlock;
     StatementNode* elseBlock;
 public:
-    IfElseStatementNode(ExpressionNode* ifExp, BlockNode* ifBlock, StatementNode* elseBlock);
+    IfElseStatementNode(ExpressionNode* ifExp, StatementNode* ifBlock, StatementNode* elseBlock);
     ~IfElseStatementNode();
 
     void Interpret();

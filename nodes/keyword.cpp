@@ -1,7 +1,7 @@
 #include <iostream>
 #include "keyword.h"
 
-IfElseStatementNode::IfElseStatementNode(ExpressionNode* ifExp, BlockNode* ifBlock, StatementNode* elseBlock)
+IfElseStatementNode::IfElseStatementNode(ExpressionNode* ifExp, StatementNode* ifBlock, StatementNode* elseBlock)
     : ifExp(ifExp), ifBlock(ifBlock), elseBlock(elseBlock) {}
 IfElseStatementNode::~IfElseStatementNode() {
     delete this->ifExp;

@@ -19,6 +19,9 @@ bool SymbolTable::Exists(const std::string& s) {
 void SymbolTable::AddEntry(const std::string& s) {
     if (!this->Exists(s)) {
         this->variables.push_back(Variable{ s,0 });
+    } else {
+        std::cout << "Redeclaration of variable: " << s << std::endl;
+        exit(EXIT_FAILURE);
     }
 }
 
