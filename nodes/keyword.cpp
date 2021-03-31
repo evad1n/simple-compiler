@@ -1,18 +1,18 @@
 #include <iostream>
 #include "keyword.h"
 
-IfElseStatementNode::IfElseStatementNode(ExpressionNode* ifExp, StatementNode* ifBlock, StatementNode* elseBlock)
-    : ifExp(ifExp), ifBlock(ifBlock), elseBlock(elseBlock) {}
+IfElseStatementNode::IfElseStatementNode(ExpressionNode* ifExp, StatementNode* ifBranch, StatementNode* elseBranch)
+    : ifExp(ifExp), ifBranch(ifBranch), elseBranch(elseBranch) {}
 IfElseStatementNode::~IfElseStatementNode() {
     delete this->ifExp;
-    delete this->ifBlock;
-    delete this->elseBlock;
+    delete this->ifBranch;
+    delete this->elseBranch;
 }
 void IfElseStatementNode::Interpret() {
     if (this->ifExp->Evaluate()) {
-        this->ifBlock->Interpret();
-    } else if (this->elseBlock != NULL) {
-        this->elseBlock->Interpret();
+        this->ifBranch->Interpret();
+    } else if (this->elseBranch != NULL) {
+        this->elseBranch->Interpret();
     }
 }
 
