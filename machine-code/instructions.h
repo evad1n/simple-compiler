@@ -61,8 +61,8 @@ public:
 
     static int gPrintInteger;
 private:
-
     static unsigned char mCode[MAX_INSTRUCTIONS]; // NOTE: Using an stl vector does not work, because they relocate their array sometimes.
+
     int mCurrent;
     int mData[MAX_DATA];
 };

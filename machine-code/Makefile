@@ -17,7 +17,13 @@ debug:
 	g++ -g *.cpp -o $(NAME).exe
 
 clean:
-	rm -f *.o *.exe
+	rm -f *.o *.out* *.exe*
+
+one:
+	g++ -c main.cpp  -fno-stack-protector -D_FORTIFY_SOURCE=0
+
+docker:
+	docker run -it --name simple-compiler --mount type=bind,source="pwd",target=/app simplecompiler:latest
 
 # To allow executing compiled code in the data segment from Linux Ubuntu:
 

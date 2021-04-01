@@ -79,8 +79,9 @@ void InstructionsClass::Encode(unsigned char c) {
 }
 
 void InstructionsClass::Encode(int x) {
-    if (mCurrent + 4 < MAX_INSTRUCTIONS) {
+    if (mCurrent + 3 < MAX_INSTRUCTIONS) {
         *((int*)(&(mCode[mCurrent]))) = x;
+        cout << *(int*)&mCode[mCurrent] << endl;
         mCurrent += 4;
     } else {
         cerr << "Error.  Used up all " << MAX_INSTRUCTIONS
@@ -122,7 +123,16 @@ void InstructionsClass::Finish() {
 
 void InstructionsClass::Execute() {
     cout << "About to Execute the machine code..." << endl;
-    void* ptr = InstructionsClass::mCode;
+    // unsigned char mCode[] = { 0x55, 0x8B, 0xEC, 0X5d, 0XC3 };
+    // unsigned char mCode[] = { InstructionsClass::mCode[0], InstructionsClass::mCode[1], InstructionsClass::mCode[2], InstructionsClass::mCode[mCurrent - 2], InstructionsClass::mCode[mCurrent - 1] };
+    unsigned char mCode[mCurrent];
+    for (size_t i = 0; i < mCurrent; i++) {
+        mCode[i] = InstructionsClass::mCode[i];
+    }
+    cout << "OGOGAOIHG" << endl;
+
+    void* ptr = mCode;
+    // void* ptr = InstructionsClass::mCode;
     void (*f)(void);
     f = (void (*)(void)) ptr;
     f();
@@ -145,6 +155,8 @@ void InstructionsClass::Call(void* function_address) {
     unsigned char* a1 = (unsigned char*)function_address;
     unsigned char* a2 = (unsigned char*)(&InstructionsClass::mCode[mCurrent + 5]);
     int offset = (int)(a1 - a2);
+    cout << "call" << endl;
+    cout << InstructionsClass::gPrintInteger << endl;
     Encode(CALL);
     Encode(offset);
 }
@@ -153,6 +165,7 @@ void InstructionsClass::Call(void* function_address) {
 // This is called by the generated machine language code.
 void HelperPrintInteger(void) {
     printf("%i ", InstructionsClass::gPrintInteger);
+    cout << "print" << endl;
 }
 
 void InstructionsClass::PopAndWrite() {
