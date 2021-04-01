@@ -57,10 +57,16 @@ StateMachine::StateMachine()
     this->legalMoves[START_STATE][NOT_CHAR] = NOT_STATE;
     this->legalMoves[NOT_STATE][EQUALS_CHAR] = NOT_EQUAL_STATE;
     this->legalMoves[START_STATE][SEMICOLON_CHAR] = SEMICOLON_STATE;
+    this->legalMoves[MINUS_STATE][DIGIT_CHAR] = INTEGER_STATE;
     this->legalMoves[INTEGER_STATE][DIGIT_CHAR] = INTEGER_STATE;
     this->legalMoves[IDENTIFIER_STATE][DIGIT_CHAR] = IDENTIFIER_STATE;
     this->legalMoves[IDENTIFIER_STATE][LETTER_CHAR] = IDENTIFIER_STATE;
     this->legalMoves[START_STATE][ENDFILE_CHAR] = ENDFILE_STATE;
+
+    this->legalMoves[START_STATE][AND_CHAR] = BITWISE_AND_STATE;
+    this->legalMoves[START_STATE][OR_CHAR] = BITWISE_OR_STATE;
+    this->legalMoves[BITWISE_AND_STATE][AND_CHAR] = AND_STATE;
+    this->legalMoves[BITWISE_OR_STATE][OR_CHAR] = OR_STATE;
 
     this->legalMoves[PLUS_STATE][EQUALS_CHAR] = PLUS_EQUALS_STATE;
     this->legalMoves[MINUS_STATE][EQUALS_CHAR] = MINUS_EQUALS_STATE;

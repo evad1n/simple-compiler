@@ -35,6 +35,8 @@ private:
     ExpressionNode* TimesDivide();
     ExpressionNode* PlusMinus();
     ExpressionNode* Relational();
+    ExpressionNode* BitwiseAnd();
+    ExpressionNode* BitwiseOr();
     ExpressionNode* And();
     ExpressionNode* Or();
     ExpressionNode* Factor();

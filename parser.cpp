@@ -189,7 +189,7 @@ IfElseStatementNode* Parser::IfElseStatement() {
         ifBlock = this->Statement();
     }
 
-    StatementNode* elseBlock;
+    StatementNode* elseBlock = NULL;
     if (this->scanner->PeekNextToken().GetTokenType() == ELSE_TOKEN) {
         this->Match(ELSE_TOKEN);
         if (this->scanner->PeekNextToken().GetTokenType() == IF_TOKEN) {
@@ -366,35 +366,53 @@ ExpressionNode* Parser::Relational() {
         this->Match(t);
         en = new NotEqualNode(en, this->PlusMinus());
         break;
-    case BITWISE_AND_TOKEN:
-        this->Match(t);
-        en = new BitwiseAndNode(en, this->PlusMinus());
-        break;
-    case BITWISE_OR_TOKEN:
-        this->Match(t);
-        en = new BitwiseOrNode(en, this->PlusMinus());
-        break;
-    case AND_TOKEN:
-        this->Match(t);
-        en = new AndNode(en, this->PlusMinus());
-        break;
-    case OR_TOKEN:
-        this->Match(t);
-        en = new OrNode(en, this->PlusMinus());
-        break;
     }
     return en;
 }
 
-ExpressionNode* Parser::And() {
+
+
+ExpressionNode* Parser::BitwiseAnd() {
     ExpressionNode* en = this->Relational();
+
+    for (;;) {
+        TokenType t = this->scanner->PeekNextToken().GetTokenType();
+        switch (t) {
+        case BITWISE_AND_TOKEN:
+            this->Match(t);
+            en = new BitwiseOrNode(en, this->PlusMinus());
+            break;
+        default:
+            return en;
+        }
+    }
+}
+
+ExpressionNode* Parser::BitwiseOr() {
+    ExpressionNode* en = this->BitwiseAnd();
+
+    for (;;) {
+        TokenType t = this->scanner->PeekNextToken().GetTokenType();
+        switch (t) {
+        case BITWISE_OR_TOKEN:
+            this->Match(t);
+            en = new BitwiseOrNode(en, this->PlusMinus());
+            break;
+        default:
+            return en;
+        }
+    }
+}
+
+ExpressionNode* Parser::And() {
+    ExpressionNode* en = this->BitwiseOr();
 
     for (;;) {
         TokenType t = this->scanner->PeekNextToken().GetTokenType();
         switch (t) {
         case AND_TOKEN:
             this->Match(t);
-            en = new AndNode(en, this->Factor());
+            en = new AndNode(en, this->Expression());
             break;
         default:
             return en;
@@ -410,7 +428,7 @@ ExpressionNode* Parser::Or() {
         switch (t) {
         case OR_TOKEN:
             this->Match(t);
-            en = new OrNode(en, this->Factor());
+            en = new OrNode(en, this->Expression());
             break;
         default:
             return en;
