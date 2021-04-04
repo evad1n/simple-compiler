@@ -55,28 +55,33 @@ int NotEqualNode::Evaluate() {
 
 BitwiseAndNode::BitwiseAndNode(ExpressionNode* left, ExpressionNode* right)
     : BinaryOperatorNode(left, right) {}
-
 int BitwiseAndNode::Evaluate() {
     return this->left->Evaluate() & this->right->Evaluate();
 }
 
 BitwiseOrNode::BitwiseOrNode(ExpressionNode* left, ExpressionNode* right)
     : BinaryOperatorNode(left, right) {}
-
 int BitwiseOrNode::Evaluate() {
     return this->left->Evaluate() | this->right->Evaluate();
 }
 
 AndNode::AndNode(ExpressionNode* left, ExpressionNode* right)
     : BinaryOperatorNode(left, right) {}
-
 int AndNode::Evaluate() {
     return this->left->Evaluate() && this->right->Evaluate();
 }
 
 OrNode::OrNode(ExpressionNode* left, ExpressionNode* right)
     : BinaryOperatorNode(left, right) {}
-
 int OrNode::Evaluate() {
     return this->left->Evaluate() || this->right->Evaluate();
+}
+
+
+// NOT
+
+NotNode::NotNode(ExpressionNode* val)
+    : UnaryOperatorNode(val) {}
+int NotNode::Evaluate() {
+    return !this->val->Evaluate();
 }

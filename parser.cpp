@@ -41,15 +41,19 @@ ProgramNode* Parser::Program() {
     return new ProgramNode(bn);
 }
 
-BlockNode* Parser::Block() {
+BlockNode* Parser::Block(bool newScope) {
     this->Match(LEFT_BRACE_TOKEN);
-    this->currentScope++;
-    SymbolTable* scope = new SymbolTable();
-    this->scopes.push_back(scope);
-    this->scopeStack.push_back(scope);
+    if (newScope) {
+        this->currentScope++;
+        SymbolTable* scope = new SymbolTable();
+        this->scopes.push_back(scope);
+        this->scopeStack.push_back(scope);
+    }
     StatementGroupNode* sgn = this->StatementGroup();
-    this->scopeStack.pop_back();
-    this->currentScope--;
+    if (newScope) {
+        this->scopeStack.pop_back();
+        this->currentScope--;
+    }
     this->Match(RIGHT_BRACE_TOKEN);
     return new BlockNode(sgn);
 }
@@ -93,8 +97,6 @@ StatementNode* Parser::Statement() {
     return NULL;
 }
 
-
-
 DeclarationStatementNode* Parser::DeclarationStatement() {
     this->Match(INT_TYPE_TOKEN);
     IdentifierNode* in = this->Identifier();
@@ -119,62 +121,66 @@ DeclarationStatementNode* Parser::DeclarationStatement() {
     return NULL;
 }
 
-StatementNode* Parser::AssignmentStatement() {
+StatementNode* Parser::AssignmentStatement(bool semicolon) {
     IdentifierNode* in = this->Identifier();
     TokenType t = this->scanner->PeekNextToken().GetTokenType();
+
+    StatementNode* sn = NULL;
     switch (t) {
     case ASSIGNMENT_TOKEN:
     {
         this->Match(t);
         ExpressionNode* en = this->Expression();
-        this->Match(SEMICOLON_TOKEN);
-        return new AssignmentStatementNode(in, en);
+        sn = new AssignmentStatementNode(in, en);
+        break;
     }
     case PLUS_EQUALS_TOKEN:
     {
         this->Match(t);
         ExpressionNode* en = this->Expression();
-        this->Match(SEMICOLON_TOKEN);
-        return new PlusEqualsStatementNode(in, en);
+        sn = new PlusEqualsStatementNode(in, en);
+        break;
     }
     case MINUS_EQUALS_TOKEN:
     {
         this->Match(t);
         ExpressionNode* en = this->Expression();
-        this->Match(SEMICOLON_TOKEN);
-        return new MinusEqualsStatementNode(in, en);
+        sn = new MinusEqualsStatementNode(in, en);
+        break;
     }
     case MULTIPLY_EQUALS_TOKEN:
     {
         this->Match(t);
         ExpressionNode* en = this->Expression();
-        this->Match(SEMICOLON_TOKEN);
-        return new MultiplyEqualsStatementNode(in, en);
+        sn = new MultiplyEqualsStatementNode(in, en);
+        break;
     }
     case DIVIDE_EQUALS_TOKEN:
     {
         this->Match(t);
         ExpressionNode* en = this->Expression();
-        this->Match(SEMICOLON_TOKEN);
-        return new DivideEqualsStatementNode(in, en);
+        sn = new DivideEqualsStatementNode(in, en);
+        break;
     }
     case INCREMENT_TOKEN:
     {
         this->Match(t);
-        this->Match(SEMICOLON_TOKEN);
-        return new IncrementStatementNode(in);
+        sn = new IncrementStatementNode(in);
+        break;
     }
     case DECREMENT_TOKEN:
     {
         this->Match(t);
-        this->Match(SEMICOLON_TOKEN);
-        return new DecrementStatementNode(in);
+        sn = new DecrementStatementNode(in);
+        break;
     }
     default:
         std::cerr << "Error: invalid assignment: " << t << std::endl;
         break;
     }
-    return NULL;
+    if (semicolon)
+        this->Match(SEMICOLON_TOKEN);
+    return sn;
 }
 
 IfElseStatementNode* Parser::IfElseStatement() {
@@ -215,31 +221,43 @@ WhileStatementNode* Parser::WhileStatement() {
 
 ForStatementNode* Parser::ForStatement() {
     this->Match(FOR_TOKEN);
+    // Create new scope
+    this->currentScope++;
+    SymbolTable* scope = new SymbolTable();
+    this->scopes.push_back(scope);
+    this->scopeStack.push_back(scope);
+
     this->Match(LEFT_PAREN_TOKEN);
     StatementNode* initializer = this->Statement();
     ExpressionNode* comparison = this->Expression();
     this->Match(SEMICOLON_TOKEN);
-    IdentifierNode* in = this->Identifier();
-    this->Match(ASSIGNMENT_TOKEN);
-    ExpressionNode* en = this->Expression();
-    AssignmentStatementNode* incrementer = new AssignmentStatementNode(in, en);
+    StatementNode* incrementer = this->AssignmentStatement(false);
     this->Match(RIGHT_PAREN_TOKEN);
-    BlockNode* bn = this->Block();
+    BlockNode* bn = this->Block(false);
+    // Exit out of scope
+    this->scopeStack.pop_back();
+    this->currentScope--;
     return new ForStatementNode(initializer, comparison, incrementer, bn);
 }
 
 ForeStatementNode* Parser::ForeStatement() {
     this->Match(FORE_TOKEN);
+    // Create new scope
+    this->currentScope++;
+    SymbolTable* scope = new SymbolTable();
+    this->scopes.push_back(scope);
+    this->scopeStack.push_back(scope);
+
     this->Match(LEFT_PAREN_TOKEN);
     StatementNode* initializer = this->Statement();
     ExpressionNode* comparison = this->Expression();
     this->Match(SEMICOLON_TOKEN);
-    IdentifierNode* in = this->Identifier();
-    this->Match(ASSIGNMENT_TOKEN);
-    ExpressionNode* en = this->Expression();
-    AssignmentStatementNode* incrementer = new AssignmentStatementNode(in, en);
+    StatementNode* incrementer = this->AssignmentStatement(false);
     this->Match(RIGHT_PAREN_TOKEN);
-    BlockNode* bn = this->Block();
+    BlockNode* bn = this->Block(false);
+    // Exit out of scope
+    this->scopeStack.pop_back();
+    this->currentScope--;
     return new ForeStatementNode(initializer, comparison, incrementer, bn);
 }
 
@@ -278,7 +296,7 @@ CinStatementNode* Parser::CinStatement() {
 
 ExpressionNode* Parser::Expression() {
     // Return lowest precedence operator first
-    return this->Or();
+    return this->Ternary();
 }
 
 ExpressionNode* Parser::Exponent() {
@@ -436,10 +454,39 @@ ExpressionNode* Parser::Or() {
     }
 }
 
+ExpressionNode* Parser::Ternary() {
+    ExpressionNode* en = this->Or();
+
+    for (;;) {
+        TokenType t = this->scanner->PeekNextToken().GetTokenType();
+        switch (t) {
+        case TERNARY_QUESTION_TOKEN:
+        {
+            this->Match(t);
+            ExpressionNode* second = this->Expression();
+            this->Match(TERNARY_COLON_TOKEN);
+            en = new TernaryOperatorNode(en, second, this->Expression());
+            break;
+        }
+        default:
+            return en;
+        }
+    }
+}
+
+
 ExpressionNode* Parser::Factor() {
     ExpressionNode* en;
     TokenType t = this->scanner->PeekNextToken().GetTokenType();
     switch (t) {
+    case NOT_TOKEN:
+        this->Match(t);
+        en = new NotNode(this->Expression());
+        break;
+    case NEGATIVE_TOKEN:
+        this->Match(t);
+        en = new NegativeNode(this->Expression());
+        break;
     case IDENTIFIER_TOKEN:
         en = this->Identifier();
         break;
@@ -460,7 +507,7 @@ ExpressionNode* Parser::Factor() {
 
 IdentifierNode* Parser::Identifier() {
     Token t = this->Match(IDENTIFIER_TOKEN);
-    return new IdentifierNode(t.GetLexeme(), this->scopeStack[this->currentScope]);
+    return new IdentifierNode(t.GetLexeme(), this->scopeStack);
 }
 
 IntegerNode* Parser::Integer() {

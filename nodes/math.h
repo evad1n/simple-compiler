@@ -2,6 +2,7 @@
 #define MATH_H
 
 #include "value.h"
+#include "operator.h"
 
 class PlusNode;
 class MinusNode;
@@ -46,6 +47,14 @@ private:
 
 public:
     ExponentNode(ExpressionNode* left, ExpressionNode* right);
+    int Evaluate();
+};
+
+class NegativeNode : public UnaryOperatorNode {
+private:
+
+public:
+    NegativeNode(ExpressionNode* val);
     int Evaluate();
 };
 

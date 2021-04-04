@@ -7,7 +7,6 @@
 class ExpressionNode;
 class IntegerNode;
 class IdentifierNode;
-class BinaryOperatorNode;
 
 class ExpressionNode {
 public:
@@ -28,10 +27,14 @@ public:
 class IdentifierNode : public ExpressionNode {
 private:
     std::string label;
-    SymbolTable* table;
+    std::vector<SymbolTable*> scopes;
+    int nearest;
 public:
-    IdentifierNode(std::string label, SymbolTable* symTable);
+    IdentifierNode(std::string label, std::vector<SymbolTable*> scopes);
     ~IdentifierNode();
+
+    // Returns the nearest symbol table scope
+    SymbolTable* GetNearestScope();
 
     void DeclareVariable();
     void SetValue(int v);
@@ -39,15 +42,6 @@ public:
     int GetIndex();
     // Return the integer value of the identifier
     int Evaluate();
-};
-
-class BinaryOperatorNode : public ExpressionNode {
-protected:
-    ExpressionNode* left;
-    ExpressionNode* right;
-public:
-    BinaryOperatorNode(ExpressionNode* left, ExpressionNode* right);
-    ~BinaryOperatorNode();
 };
 
 #endif // VALUE_H

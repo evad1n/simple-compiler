@@ -2,6 +2,7 @@
 #define RELATIONAL_H
 
 #include "value.h"
+#include "operator.h"
 
 class LessNode;
 class LessEqualNode;
@@ -83,6 +84,14 @@ private:
 
 public:
     OrNode(ExpressionNode* left, ExpressionNode* right);
+    int Evaluate();
+};
+
+class NotNode : public UnaryOperatorNode {
+private:
+
+public:
+    NotNode(ExpressionNode* val);
     int Evaluate();
 };
 

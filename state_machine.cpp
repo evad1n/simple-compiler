@@ -22,8 +22,10 @@ StateMachine::StateMachine()
     this->legalMoves[START_STATE][EQUALS_CHAR] = ASSIGNMENT_STATE;
     this->legalMoves[ASSIGNMENT_STATE][EQUALS_CHAR] = EQUALITY_STATE;
     this->legalMoves[START_STATE][PLUS_CHAR] = PLUS_STATE;
-    this->legalMoves[START_STATE][MINUS_CHAR] = MINUS_STATE;
+    this->legalMoves[START_STATE][MINUS_CHAR] = NEGATIVE_STATE;
     this->legalMoves[START_STATE][FORWARD_SLASH_CHAR] = DIVIDE_STATE;
+    this->legalMoves[START_STATE][QUESTION_CHAR] = TERNARY_QUESTION_STATE;
+    this->legalMoves[START_STATE][COLON_CHAR] = TERNARY_COLON_STATE;
 
     // LINE COMMENTS
     this->legalMoves[DIVIDE_STATE][FORWARD_SLASH_CHAR] = LINE_COMMENT_STATE;
@@ -57,7 +59,6 @@ StateMachine::StateMachine()
     this->legalMoves[START_STATE][NOT_CHAR] = NOT_STATE;
     this->legalMoves[NOT_STATE][EQUALS_CHAR] = NOT_EQUAL_STATE;
     this->legalMoves[START_STATE][SEMICOLON_CHAR] = SEMICOLON_STATE;
-    this->legalMoves[MINUS_STATE][DIGIT_CHAR] = INTEGER_STATE;
     this->legalMoves[INTEGER_STATE][DIGIT_CHAR] = INTEGER_STATE;
     this->legalMoves[IDENTIFIER_STATE][DIGIT_CHAR] = IDENTIFIER_STATE;
     this->legalMoves[IDENTIFIER_STATE][LETTER_CHAR] = IDENTIFIER_STATE;
@@ -69,12 +70,13 @@ StateMachine::StateMachine()
     this->legalMoves[BITWISE_OR_STATE][OR_CHAR] = OR_STATE;
 
     this->legalMoves[PLUS_STATE][EQUALS_CHAR] = PLUS_EQUALS_STATE;
-    this->legalMoves[MINUS_STATE][EQUALS_CHAR] = MINUS_EQUALS_STATE;
+    this->legalMoves[NEGATIVE_STATE][EQUALS_CHAR] = MINUS_EQUALS_STATE;
+    this->legalMoves[NEGATIVE_STATE][WHITESPACE_CHAR] = MINUS_STATE;
     this->legalMoves[MULTIPLY_STATE][EQUALS_CHAR] = MULTIPLY_EQUALS_STATE;
     this->legalMoves[DIVIDE_STATE][EQUALS_CHAR] = DIVIDE_EQUALS_STATE;
 
     this->legalMoves[PLUS_STATE][PLUS_CHAR] = PLUS_PLUS_STATE;
-    this->legalMoves[MINUS_STATE][MINUS_CHAR] = MINUS_MINUS_STATE;
+    this->legalMoves[NEGATIVE_STATE][MINUS_CHAR] = MINUS_MINUS_STATE;
     this->legalMoves[MULTIPLY_STATE][STAR_CHAR] = STAR_STAR_STATE;
 
     // First, initialize all states to correspond to the BAD token type.
@@ -95,7 +97,10 @@ StateMachine::StateMachine()
     this->correspondingTokenTypes[GREATER_EQUAL_STATE] = GREATER_EQUAL_TOKEN;
     this->correspondingTokenTypes[EQUALITY_STATE] = EQUAL_TOKEN;
     this->correspondingTokenTypes[NOT_EQUAL_STATE] = NOT_EQUAL_TOKEN;
+
     this->correspondingTokenTypes[NOT_STATE] = NOT_TOKEN;
+    this->correspondingTokenTypes[NEGATIVE_STATE] = NEGATIVE_TOKEN;
+
     this->correspondingTokenTypes[BITWISE_AND_STATE] = BITWISE_AND_TOKEN;
     this->correspondingTokenTypes[BITWISE_OR_STATE] = BITWISE_OR_TOKEN;
     this->correspondingTokenTypes[AND_STATE] = AND_TOKEN;
@@ -117,6 +122,9 @@ StateMachine::StateMachine()
     this->correspondingTokenTypes[PLUS_PLUS_STATE] = INCREMENT_TOKEN;
     this->correspondingTokenTypes[MINUS_MINUS_STATE] = DECREMENT_TOKEN;
     this->correspondingTokenTypes[STAR_STAR_STATE] = EXPONENT_TOKEN;
+
+    this->correspondingTokenTypes[TERNARY_QUESTION_STATE] = TERNARY_QUESTION_TOKEN;
+    this->correspondingTokenTypes[TERNARY_COLON_STATE] = TERNARY_COLON_TOKEN;
 
     this->correspondingTokenTypes[ENDFILE_STATE] = ENDFILE_TOKEN;
 }
@@ -164,6 +172,10 @@ MachineState StateMachine::UpdateState(char currentCharacter, TokenType& corresp
         charType = AND_CHAR;
     else if (currentCharacter == '|')
         charType = OR_CHAR;
+    else if (currentCharacter == '?')
+        charType = QUESTION_CHAR;
+    else if (currentCharacter == ':')
+        charType = COLON_CHAR;
     else if (currentCharacter == EOF)
         charType = ENDFILE_CHAR;
 

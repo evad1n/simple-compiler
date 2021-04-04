@@ -16,13 +16,13 @@ private:
     Token Match(TokenType expected);
 
     ProgramNode* Program();
-    BlockNode* Block();
+    BlockNode* Block(bool newScope = true);
     StatementGroupNode* StatementGroup();
     StatementNode* Statement();
     // Statements
     DeclarationStatementNode* DeclarationStatement();
     DeclarationAssignmentStatementNode* DeclarationAssignmentStatement();
-    StatementNode* AssignmentStatement();
+    StatementNode* AssignmentStatement(bool semicolon = true);
     IfElseStatementNode* IfElseStatement();
     WhileStatementNode* WhileStatement();
     ForStatementNode* ForStatement();
@@ -39,6 +39,7 @@ private:
     ExpressionNode* BitwiseOr();
     ExpressionNode* And();
     ExpressionNode* Or();
+    ExpressionNode* Ternary();
     ExpressionNode* Factor();
 
     IdentifierNode* Identifier();

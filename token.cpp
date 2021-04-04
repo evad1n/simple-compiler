@@ -16,6 +16,8 @@ const std::string gTokenTypeNames[] = {
     "GREATER", "GREATER_EQUAL",
     "EQUAL", "NOT_EQUAL",
     "BITWISE_AND", "BITWISE_OR",
+    "NEGATIVE",
+    "TERNARY_QUESTION", "TERNARY_COLON",
     "NOT", "AND", "OR",
     "PLUS", "MINUS", "MULTIPLY", "DIVIDE", "EXPONENT",
     "INSERTION", "EXTRACTION", "ASSIGNMENT",

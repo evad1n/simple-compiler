@@ -7,7 +7,7 @@ void test() {
     InstructionsClass code;
 
     code.PushValue(1000);
-    // code.PopAndWrite(); // 1000
+    code.PopAndStore(1); // 1000
 
     // code.PushVariable(10);
     // code.PopAndWrite(); // 2000
