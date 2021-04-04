@@ -53,7 +53,8 @@ void machine() {
 void interpret(std::string fileName) {
     Scanner* scanner = new Scanner(fileName);
     Parser* parser = new Parser(scanner);
-    parser->Start()->Interpret();
+    parser->Start().Interpret();
+    delete parser;
 }
 
 int main(int argc, char const* argv[]) {

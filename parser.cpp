@@ -12,6 +12,9 @@ Parser::Parser(Scanner* scanner)
 
 Parser::~Parser() {
     delete this->scanner;
+    for (auto s : this->scopes) {
+        delete s;
+    }
 }
 
 Token Parser::Match(TokenType expected) {
@@ -26,10 +29,10 @@ Token Parser::Match(TokenType expected) {
     return t;
 }
 
-StartNode* Parser::Start() {
+StartNode Parser::Start() {
     ProgramNode* pn = this->Program();
     this->Match(ENDFILE_TOKEN);
-    return new StartNode(pn);
+    return StartNode(pn);
 }
 
 ProgramNode* Parser::Program() {

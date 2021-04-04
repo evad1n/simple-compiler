@@ -126,12 +126,11 @@ void InstructionsClass::Execute() {
     // unsigned char mCode[] = { 0x55, 0x8B, 0xEC, 0X5d, 0XC3 };
     // unsigned char mCode[] = { InstructionsClass::mCode[0], InstructionsClass::mCode[1], InstructionsClass::mCode[2], InstructionsClass::mCode[mCurrent - 2], InstructionsClass::mCode[mCurrent - 1] };
 
-    unsigned char stackCode[5000];
+    // unsigned char stackCode[5000];
+    unsigned char* stackCode = new unsigned char[5000];
     for (size_t i = 0; i < mCurrent; i++) {
         stackCode[i] = InstructionsClass::mCode[i];
     }
-
-    cout << "OGOGAOIHG" << endl;
 
     void* ptr = stackCode;
     // void* ptr = InstructionsClass::mCode;

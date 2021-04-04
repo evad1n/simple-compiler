@@ -22,8 +22,11 @@ clean:
 one:
 	g++ -c main.cpp  -fno-stack-protector -D_FORTIFY_SOURCE=0
 
-docker:
-	docker run -it --name simple-compiler --mount type=bind,source="pwd",target=/app simplecompiler:latest
+docker-gcc:
+	docker run -it --name simple-compiler --mount type=bind,source="$(shell pwd)",target=/app simplecompiler:latest
+
+docker-ubuntu:
+	docker run -it --name simple-compiler-ubuntu --mount type=bind,source="$(shell pwd)",target=/app simplecompiler-ubuntu:latest
 
 # To allow executing compiled code in the data segment from Linux Ubuntu:
 

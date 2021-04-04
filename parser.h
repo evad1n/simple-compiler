@@ -48,7 +48,7 @@ public:
     Parser(Scanner* scanner);
     ~Parser();
 
-    StartNode* Start();
+    StartNode Start();
 };
 
 
