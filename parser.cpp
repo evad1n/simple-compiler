@@ -29,10 +29,10 @@ Token Parser::Match(TokenType expected) {
     return t;
 }
 
-StartNode Parser::Start() {
+StartNode* Parser::Start() {
     ProgramNode* pn = this->Program();
     this->Match(ENDFILE_TOKEN);
-    return StartNode(pn);
+    return new StartNode(pn);
 }
 
 ProgramNode* Parser::Program() {
