@@ -401,7 +401,7 @@ ExpressionNode* Parser::BitwiseAnd() {
         switch (t) {
         case BITWISE_AND_TOKEN:
             this->Match(t);
-            en = new BitwiseOrNode(en, this->PlusMinus());
+            en = new BitwiseAndNode(en, this->PlusMinus());
             break;
         default:
             return en;
