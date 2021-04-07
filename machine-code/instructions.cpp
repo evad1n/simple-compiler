@@ -44,11 +44,7 @@ const unsigned char JE_FAR1 = 0x0f; // 4 byte jump
 const unsigned char JE_FAR2 = 0x84; // 4 byte jump
 const unsigned char JUMP_ALWAYS_FAR = 0xE9; // 4 byte jump (NOT 2 byte!)
 
-// Initialize static class variables
-unsigned char InstructionsClass::mCode[MAX_INSTRUCTIONS] = { 0 };
-
-// A location to store an integer that is about to be printed.
-int InstructionsClass::gPrintInteger = 0;
+int gPrintInteger;
 
 void HelperPrintInteger(void);
 
@@ -123,17 +119,7 @@ void InstructionsClass::Finish() {
 
 void InstructionsClass::Execute() {
     cout << "About to Execute the machine code..." << endl;
-    // unsigned char mCode[] = { 0x55, 0x8B, 0xEC, 0X5d, 0XC3 };
-    // unsigned char mCode[] = { InstructionsClass::mCode[0], InstructionsClass::mCode[1], InstructionsClass::mCode[2], InstructionsClass::mCode[mCurrent - 2], InstructionsClass::mCode[mCurrent - 1] };
-
-    // unsigned char stackCode[5000];
-    unsigned char* stackCode = new unsigned char[5000];
-    for (size_t i = 0; i < mCurrent; i++) {
-        stackCode[i] = InstructionsClass::mCode[i];
-    }
-
-    void* ptr = stackCode;
-    // void* ptr = InstructionsClass::mCode;
+    void* ptr = this->mCode;
     void (*f)(void);
     f = (void (*)(void)) ptr;
     f();
@@ -164,7 +150,7 @@ void InstructionsClass::Call(void* function_address) {
 // prints the integer value at location gPrintInteger
 // This is called by the generated machine language code.
 void HelperPrintInteger(void) {
-    printf("%i ", InstructionsClass::gPrintInteger);
+    printf("%i ", gPrintInteger);
     cout << "print" << endl;
 }
 

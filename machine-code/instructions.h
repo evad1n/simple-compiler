@@ -59,9 +59,8 @@ public:
 
     void SetOffset(unsigned char* codeAddress, int offset); // After a jump offset becomes known, this method can be used to go back and set it.
 
-    static int gPrintInteger;
 private:
-    static unsigned char mCode[MAX_INSTRUCTIONS]; // NOTE: Using an stl vector does not work, because they relocate their array sometimes.
+    unsigned char mCode[MAX_INSTRUCTIONS]; // NOTE: Using an stl vector does not work, because they relocate their array sometimes.
 
     int mCurrent;
     int mData[MAX_DATA];
