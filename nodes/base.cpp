@@ -5,6 +5,9 @@ Node::~Node() {}
 
 StartNode::StartNode(ProgramNode* pn)
     : programNode(pn) {}
+void StartNode::Code(InstructionsClass& machineCode) {
+    this->programNode->Code(machineCode);
+}
 StartNode::~StartNode() {
     delete this->programNode;
 }
@@ -14,6 +17,9 @@ void StartNode::Interpret() {
 
 ProgramNode::ProgramNode(BlockNode* bn)
     : blockNode(bn) {}
+void ProgramNode::Code(InstructionsClass& machineCode) {
+    this->blockNode->Code(machineCode);
+}
 ProgramNode::~ProgramNode() {
     delete this->blockNode;
 }

@@ -2,6 +2,7 @@
 #define BASE_H
 
 #include <vector>
+#include "../machine-code/instructions.h"
 
 class Node;
 class StartNode;
@@ -14,6 +15,7 @@ class Node {
 public:
     virtual ~Node();
     virtual void Interpret() = 0;
+    virtual void Code(InstructionsClass& machineCode) = 0;
 };
 
 class StartNode : public Node {
@@ -24,6 +26,7 @@ public:
     ~StartNode();
 
     void Interpret();
+    void Code(InstructionsClass& machineCode);
 };
 
 class ProgramNode : public Node {
@@ -34,6 +37,7 @@ public:
     ~ProgramNode();
 
     void Interpret();
+    void Code(InstructionsClass& machineCode);
 };
 
 class StatementNode : public Node {
@@ -50,6 +54,7 @@ public:
     ~BlockNode();
 
     void Interpret();
+    void Code(InstructionsClass& machineCode);
 };
 
 class StatementGroupNode : public Node {
@@ -60,6 +65,8 @@ public:
     ~StatementGroupNode();
 
     void Interpret();
+    void Code(InstructionsClass& machineCode);
+
     void AddStatement(StatementNode* node);
 };
 

@@ -3,6 +3,7 @@
 
 #include <string>
 #include "../symbol.h"
+#include "../machine-code/instructions.h"
 
 class ExpressionNode;
 class IntegerNode;
@@ -12,6 +13,7 @@ class ExpressionNode {
 public:
     virtual ~ExpressionNode();
     virtual int Evaluate() = 0;
+    virtual void CodeEvaluate(InstructionsClass& machineCode) = 0;
 };
 
 
