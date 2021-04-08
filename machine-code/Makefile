@@ -9,14 +9,7 @@ all: build
 run: build
 	./$(NAME).exe
 
-run2: build2
-	./$(NAME).exe
-
 build:
-	g++ *.cpp -o $(NAME).exe 
-	execstack -s $(NAME).exe 
-
-build2:
 	g++ *.cpp -o $(NAME).exe -z execstack
 	
 debug: 

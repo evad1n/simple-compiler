@@ -6,11 +6,11 @@ using namespace std;
 void test() {
     InstructionsClass code;
 
-    // code.PushValue(1000);
-    // code.PopAndStore(1); // 1000
+    code.PushValue(1000);
+    code.PopAndWrite(); // 1000
 
-    code.PushVariable(10);
-    code.PopAndWrite(); // 2000
+    // code.PushVariable(10);
+    // code.PopAndWrite(); // 2000
 
     // code.PushVariable(10);
     // code.PopAndStore(11);
@@ -26,7 +26,7 @@ void test() {
     std::cout << "Success!" << std::endl;
 }
 // a
-int base() {
+void base() {
     unsigned char mCode[] = { 0x55, 0x8B, 0xEC, 0X5d, 0XC3 };
     cout << "About to Execute the machine code...\n";
     void* ptr = mCode;

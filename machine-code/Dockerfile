@@ -36,7 +36,6 @@ FROM ubuntu:16.04
 RUN apt-get -y update && apt-get install -y
 # Install compilation tools
 RUN apt-get -y install build-essential
-RUN apt-get -y install execstack
 
 WORKDIR /app
 

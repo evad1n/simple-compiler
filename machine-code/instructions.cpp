@@ -44,12 +44,14 @@ const unsigned char JE_FAR1 = 0x0f; // 4 byte jump
 const unsigned char JE_FAR2 = 0x84; // 4 byte jump
 const unsigned char JUMP_ALWAYS_FAR = 0xE9; // 4 byte jump (NOT 2 byte!)
 
+const unsigned char MY = 0xEB;
+
 int gPrintInteger;
 
 void HelperPrintInteger(void);
 
 InstructionsClass::InstructionsClass() {
-    mData[10] = 2000;
+    // mData[10] = 2000;
     void* p = NULL;
     int pointerSize = sizeof(p);
     if (pointerSize == 4) {
@@ -73,7 +75,7 @@ void InstructionsClass::Encode(unsigned char c) {
         exit(1);
     }
 }
-
+// mData[10] = 2000;
 void InstructionsClass::Encode(int x) {
     if (mCurrent + 3 < MAX_INSTRUCTIONS) {
         *((int*)(&(mCode[mCurrent]))) = x;
@@ -89,7 +91,7 @@ void InstructionsClass::Encode(int x) {
 
 void InstructionsClass::Encode(long long x) {
     if (mCurrent + 8 < MAX_INSTRUCTIONS) {
-        *((int*)(&(mCode[mCurrent]))) = x;
+        *((long long*)(&(mCode[mCurrent]))) = x;
         mCurrent += 8;
     } else {
         cerr << "Error.  Used up all " << MAX_INSTRUCTIONS
@@ -140,11 +142,10 @@ void InstructionsClass::PushValue(int value) {
 
 void InstructionsClass::Call(void* function_address) {
     unsigned char* a1 = (unsigned char*)function_address;
-    unsigned char* a2 = (unsigned char*)(&InstructionsClass::mCode[mCurrent + 5]);
+    unsigned char* a2 = (unsigned char*)(&this->mCode[mCurrent + 5]);
     int offset = (int)(a1 - a2);
-    cout << "call" << endl;
+    cout << "call: " << sizeof(offset) << endl;
     Encode(CALL);
-    Encode(offset);
 }
 
 // prints the integer value at location gPrintInteger
@@ -158,6 +159,7 @@ void InstructionsClass::PopAndWrite() {
     Encode(POP_EAX);
     Encode(EAX_TO_MEM);
     Encode(&gPrintInteger);
+    // HelperPrintInteger();
     Call((void*)HelperPrintInteger);
 }
 
