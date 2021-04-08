@@ -44,27 +44,13 @@ const unsigned char JE_FAR1 = 0x0f; // 4 byte jump
 const unsigned char JE_FAR2 = 0x84; // 4 byte jump
 const unsigned char JUMP_ALWAYS_FAR = 0xE9; // 4 byte jump (NOT 2 byte!)
 
-const unsigned char MY = 0xEB;
+// Initialize static class variables
+unsigned char InstructionsClass::mCode[MAX_INSTRUCTIONS] = { 0 };
 
-int gPrintInteger;
+// A location to store an integer that is about to be printed.
+int InstructionsClass::gPrintInteger = 0;
 
 void HelperPrintInteger(void);
-
-InstructionsClass::InstructionsClass() {
-    // mData[10] = 2000;
-    void* p = NULL;
-    int pointerSize = sizeof(p);
-    if (pointerSize == 4) {
-        cout << "Compiling for 32 bit" << endl;
-    } else if (sizeof(p) == 8) {
-        cout << "Compiling for 64 bit" << endl;
-    }
-
-    mCurrent = 0;
-    Encode(PUSH_EBP);
-    Encode(MOV_EBP_ESP1);
-    Encode(MOV_EBP_ESP2);
-}
 
 void InstructionsClass::Encode(unsigned char c) {
     if (mCurrent < MAX_INSTRUCTIONS)
@@ -75,7 +61,7 @@ void InstructionsClass::Encode(unsigned char c) {
         exit(1);
     }
 }
-// mData[10] = 2000;
+
 void InstructionsClass::Encode(int x) {
     if (mCurrent + 3 < MAX_INSTRUCTIONS) {
         *((int*)(&(mCode[mCurrent]))) = x;
@@ -87,7 +73,6 @@ void InstructionsClass::Encode(int x) {
         exit(1);
     }
 }
-
 
 void InstructionsClass::Encode(long long x) {
     if (mCurrent + 8 < MAX_INSTRUCTIONS) {
@@ -112,6 +97,21 @@ void InstructionsClass::Encode(void* p) {
     }
 }
 
+InstructionsClass::InstructionsClass() {
+    void* p = NULL;
+    int pointerSize = sizeof(p);
+    if (pointerSize == 4) {
+        cout << "Compiling for 32 bit" << endl;
+    } else if (sizeof(p) == 8) {
+        cout << "Compiling for 64 bit" << endl;
+    }
+
+    mCurrent = 0;
+    Encode(PUSH_EBP);
+    Encode(MOV_EBP_ESP1);
+    Encode(MOV_EBP_ESP2);
+}
+
 void InstructionsClass::Finish() {
     Encode(POP_EBP);
     Encode(NEAR_RET);
@@ -121,7 +121,7 @@ void InstructionsClass::Finish() {
 
 void InstructionsClass::Execute() {
     cout << "About to Execute the machine code..." << endl;
-    void* ptr = this->mCode;
+    void* ptr = InstructionsClass::mCode;
     void (*f)(void);
     f = (void (*)(void)) ptr;
     f();
@@ -142,9 +142,8 @@ void InstructionsClass::PushValue(int value) {
 
 void InstructionsClass::Call(void* function_address) {
     unsigned char* a1 = (unsigned char*)function_address;
-    unsigned char* a2 = (unsigned char*)(&this->mCode[mCurrent + 5]);
+    unsigned char* a2 = (unsigned char*)(&InstructionsClass::mCode[mCurrent + 5]);
     int offset = (int)(a1 - a2);
-    cout << "call: " << sizeof(offset) << endl;
     Encode(CALL);
     Encode(offset);
 }
@@ -152,15 +151,13 @@ void InstructionsClass::Call(void* function_address) {
 // prints the integer value at location gPrintInteger
 // This is called by the generated machine language code.
 void HelperPrintInteger(void) {
-    printf("%i ", gPrintInteger);
-    cout << "print" << endl;
+    printf("%i ", InstructionsClass::gPrintInteger);
 }
 
 void InstructionsClass::PopAndWrite() {
     Encode(POP_EAX);
     Encode(EAX_TO_MEM);
     Encode(&gPrintInteger);
-    // HelperPrintInteger();
     Call((void*)HelperPrintInteger);
 }
 

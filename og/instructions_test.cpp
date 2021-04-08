@@ -9,8 +9,8 @@ void test() {
     // code.PushValue(1000);
     // code.PopAndWrite(); // 1000
 
-    code.PushValue(1000);
-    code.PopAndStore(1);
+    // code.PushValue(1000);
+    // code.PopAndStore(1);
 
     // code.PushVariable(10);
     // code.PopAndWrite(); // 2000
@@ -41,7 +41,7 @@ void base() {
 
 int main() {
 
-    // base();
+    base();
 
     test();
 
