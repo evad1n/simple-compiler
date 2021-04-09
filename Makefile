@@ -14,8 +14,8 @@ run: compiler
 compiler:
 	g++ $(SOURCE) -o $(NAME).exe
 
-old: 
-	g++-9 $(SOURCE) -o $(NAME).exe
+machine: 
+	g++-9 $(SOURCE) -o $(NAME).exe -z execstack
 	./$(NAME).exe
 
 log: logging

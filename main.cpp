@@ -92,7 +92,7 @@ int main(int argc, char const* argv[]) {
     }
     // testNodes();
     // testTokens();
-    // machine();
+    machine();
 
     return 0;
 }
