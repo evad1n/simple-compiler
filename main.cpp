@@ -51,12 +51,32 @@ void machine() {
 }
 
 void interpret(std::string fileName) {
-    Scanner* scanner = new Scanner(fileName);
-    Parser* parser = new Parser(scanner);
-    StartNode* start = parser->Start();
+    Scanner scanner(fileName);
+    Parser parser(&scanner);
+    StartNode* start = parser.Start();
     start->Interpret();
     delete start;
-    delete parser;
+}
+
+void codeAndExecute(std::string fileName) {
+    // Create scanner, symbol table, and parser objects.
+    Scanner scanner(fileName);
+    Parser parser(&scanner);
+
+    // Do the parsing, which results in a parse tree.
+    StartNode* root = parser.Start();
+
+    // Create the machine code instructions from the parse tree
+    InstructionsClass machineCode;
+    root->Code(machineCode);
+    machineCode.Finish();
+    machineCode.PrintAllMachineCodes();
+
+    // Execute the machine code instructions previously created
+    machineCode.Execute();
+
+    // cleanup recursively
+    delete root;
 }
 
 int main(int argc, char const* argv[]) {
@@ -66,7 +86,8 @@ int main(int argc, char const* argv[]) {
     } else {
         for (int i = 1; i < argc; i++) {
             // printTokens(argv[i]);
-            interpret(argv[1]);
+            // interpret(argv[i]);
+            codeAndExecute(argv[i]);
         }
     }
     // testNodes();

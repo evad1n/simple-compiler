@@ -22,6 +22,7 @@ public:
     ~IfElseStatementNode();
 
     void Interpret();
+    void Code(InstructionsClass& machineCode);
 };
 
 class WhileStatementNode : public StatementNode {
@@ -33,10 +34,11 @@ public:
     ~WhileStatementNode();
 
     void Interpret();
+    void Code(InstructionsClass& machineCode);
 };
 
 class ForStatementNode : public StatementNode {
-private:
+protected:
     StatementNode* initializer;
     ExpressionNode* comparison;
     StatementNode* incrementer;
@@ -50,23 +52,20 @@ public:
     ~ForStatementNode();
 
     void Interpret();
+    void Code(InstructionsClass& machineCode);
 };
 
-class ForeStatementNode : public StatementNode {
+class ForeStatementNode : public ForStatementNode {
 private:
-    StatementNode* initializer;
-    ExpressionNode* comparison;
-    StatementNode* incrementer;
-    BlockNode* blockNode;
 public:
     ForeStatementNode(
         StatementNode* initializer,
         ExpressionNode* comparison,
         StatementNode* incrementer,
         BlockNode* bn);
-    ~ForeStatementNode();
 
     void Interpret();
+    void Code(InstructionsClass& machineCode);
 };
 
 class CoutStatementNode : public StatementNode {
@@ -77,6 +76,7 @@ public:
     ~CoutStatementNode();
 
     void Interpret();
+    void Code(InstructionsClass& machineCode);
 };
 
 class CinStatementNode : public StatementNode {
@@ -87,6 +87,7 @@ public:
     ~CinStatementNode();
 
     void Interpret();
+    void Code(InstructionsClass& machineCode);
 };
 
 #endif // KEYWORD_H

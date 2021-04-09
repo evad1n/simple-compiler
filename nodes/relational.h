@@ -22,6 +22,7 @@ private:
 public:
     LessNode(ExpressionNode* left, ExpressionNode* right);
     int Evaluate();
+    void CodeEvaluate(InstructionsClass& machineCode);
 };
 class LessEqualNode : public BinaryOperatorNode {
 private:
@@ -29,6 +30,7 @@ private:
 public:
     LessEqualNode(ExpressionNode* left, ExpressionNode* right);
     int Evaluate();
+    void CodeEvaluate(InstructionsClass& machineCode);
 };
 class GreaterNode : public BinaryOperatorNode {
 private:
@@ -36,6 +38,7 @@ private:
 public:
     GreaterNode(ExpressionNode* left, ExpressionNode* right);
     int Evaluate();
+    void CodeEvaluate(InstructionsClass& machineCode);
 };
 class GreaterEqualNode : public BinaryOperatorNode {
 private:
@@ -43,6 +46,7 @@ private:
 public:
     GreaterEqualNode(ExpressionNode* left, ExpressionNode* right);
     int Evaluate();
+    void CodeEvaluate(InstructionsClass& machineCode);
 };
 class EqualNode : public BinaryOperatorNode {
 private:
@@ -50,6 +54,7 @@ private:
 public:
     EqualNode(ExpressionNode* left, ExpressionNode* right);
     int Evaluate();
+    void CodeEvaluate(InstructionsClass& machineCode);
 };
 class NotEqualNode : public BinaryOperatorNode {
 private:
@@ -57,6 +62,7 @@ private:
 public:
     NotEqualNode(ExpressionNode* left, ExpressionNode* right);
     int Evaluate();
+    void CodeEvaluate(InstructionsClass& machineCode);
 };
 class BitwiseAndNode : public BinaryOperatorNode {
 private:
@@ -64,6 +70,7 @@ private:
 public:
     BitwiseAndNode(ExpressionNode* left, ExpressionNode* right);
     int Evaluate();
+    void CodeEvaluate(InstructionsClass& machineCode);
 };
 class BitwiseOrNode : public BinaryOperatorNode {
 private:
@@ -71,6 +78,7 @@ private:
 public:
     BitwiseOrNode(ExpressionNode* left, ExpressionNode* right);
     int Evaluate();
+    void CodeEvaluate(InstructionsClass& machineCode);
 };
 class AndNode : public BinaryOperatorNode {
 private:
@@ -78,6 +86,7 @@ private:
 public:
     AndNode(ExpressionNode* left, ExpressionNode* right);
     int Evaluate();
+    void CodeEvaluate(InstructionsClass& machineCode);
 };
 class OrNode : public BinaryOperatorNode {
 private:
@@ -85,6 +94,7 @@ private:
 public:
     OrNode(ExpressionNode* left, ExpressionNode* right);
     int Evaluate();
+    void CodeEvaluate(InstructionsClass& machineCode);
 };
 
 class NotNode : public UnaryOperatorNode {
@@ -93,6 +103,7 @@ private:
 public:
     NotNode(ExpressionNode* val);
     int Evaluate();
+    void CodeEvaluate(InstructionsClass& machineCode);
 };
 
 #endif // RELATIONAL_H

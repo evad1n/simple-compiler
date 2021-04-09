@@ -4,12 +4,12 @@ CXXFLAGS=-Wall -Werror
 
 NAME=simple-compiler
 
-SOURCE= *.cpp nodes/*
+SOURCE= *.cpp nodes/* machine-code/*
 
 all: compiler
 
 run: compiler
-	./$(NAME).exe inputs/scope.c
+	./$(NAME).exe inputs/basic
 
 compiler:
 	g++ $(SOURCE) -o $(NAME).exe

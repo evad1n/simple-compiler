@@ -5,11 +5,11 @@ Node::~Node() {}
 
 StartNode::StartNode(ProgramNode* pn)
     : programNode(pn) {}
-void StartNode::Code(InstructionsClass& machineCode) {
-    this->programNode->Code(machineCode);
-}
 StartNode::~StartNode() {
     delete this->programNode;
+}
+void StartNode::Code(InstructionsClass& machineCode) {
+    this->programNode->Code(machineCode);
 }
 void StartNode::Interpret() {
     this->programNode->Interpret();
@@ -17,11 +17,11 @@ void StartNode::Interpret() {
 
 ProgramNode::ProgramNode(BlockNode* bn)
     : blockNode(bn) {}
-void ProgramNode::Code(InstructionsClass& machineCode) {
-    this->blockNode->Code(machineCode);
-}
 ProgramNode::~ProgramNode() {
     delete this->blockNode;
+}
+void ProgramNode::Code(InstructionsClass& machineCode) {
+    this->blockNode->Code(machineCode);
 }
 void ProgramNode::Interpret() {
     this->blockNode->Interpret();
@@ -32,6 +32,9 @@ BlockNode::BlockNode(StatementGroupNode* sgn)
 BlockNode::~BlockNode() {
     delete this->sgNode;
 }
+void BlockNode::Code(InstructionsClass& machineCode) {
+    this->sgNode->Code(machineCode);
+}
 void BlockNode::Interpret() {
     this->sgNode->Interpret();
 }
@@ -41,6 +44,11 @@ StatementGroupNode::StatementGroupNode()
 StatementGroupNode::~StatementGroupNode() {
     for (auto n : this->nodes) {
         delete n;
+    }
+}
+void StatementGroupNode::Code(InstructionsClass& machineCode) {
+    for (auto n : this->nodes) {
+        n->Code(machineCode);
     }
 }
 void StatementGroupNode::Interpret() {

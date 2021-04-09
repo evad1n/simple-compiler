@@ -15,6 +15,14 @@ void IfElseStatementNode::Interpret() {
         this->elseBranch->Interpret();
     }
 }
+void IfElseStatementNode::Code(InstructionsClass& machineCode) {
+    this->ifExp->CodeEvaluate(machineCode);
+    unsigned char* insertAddress = machineCode.SkipIfZeroStack();
+    unsigned char* address1 = machineCode.GetAddress();
+    this->ifBranch->Code(machineCode);
+    unsigned char* address2 = machineCode.GetAddress();
+    machineCode.SetOffset(insertAddress, (int)(address2 - address1));
+}
 
 WhileStatementNode::WhileStatementNode(ExpressionNode* en, BlockNode* bn)
     : expNode(en), blockNode(bn) {}
@@ -27,6 +35,18 @@ void WhileStatementNode::Interpret() {
         this->blockNode->Interpret();
     }
 }
+void WhileStatementNode::Code(InstructionsClass& machineCode) {
+    unsigned char* address1 = machineCode.GetAddress();
+    this->expNode->CodeEvaluate(machineCode);
+    unsigned char* insertAddressSkip = machineCode.SkipIfZeroStack();
+    unsigned char* address2 = machineCode.GetAddress();
+    this->blockNode->Code(machineCode);
+    unsigned char* insertAddressJump = machineCode.Jump();
+    unsigned char* address3 = machineCode.GetAddress();
+    machineCode.SetOffset(insertAddressSkip, (int)(address3 - address2));
+    machineCode.SetOffset(insertAddressJump, (int)(address1 - address3));
+}
+
 
 ForStatementNode::ForStatementNode(
     StatementNode* initializer,
@@ -50,22 +70,16 @@ void ForStatementNode::Interpret() {
         this->incrementer->Interpret();
     }
 }
+void ForStatementNode::Code(InstructionsClass& machineCode) {
+
+}
 
 ForeStatementNode::ForeStatementNode(
     StatementNode* initializer,
     ExpressionNode* comparison,
     StatementNode* incrementer,
     BlockNode* bn)
-    : initializer(initializer),
-    comparison(comparison),
-    incrementer(incrementer),
-    blockNode(bn) {}
-ForeStatementNode::~ForeStatementNode() {
-    delete this->initializer;
-    delete this->comparison;
-    delete this->incrementer;
-    delete this->blockNode;
-}
+    : ForStatementNode(initializer, comparison, incrementer, blockNode) {}
 void ForeStatementNode::Interpret() {
     this->initializer->Interpret();
     while (this->comparison->Evaluate()) {
@@ -74,6 +88,9 @@ void ForeStatementNode::Interpret() {
         }
         this->incrementer->Interpret();
     }
+}
+void ForeStatementNode::Code(InstructionsClass& machineCode) {
+
 }
 
 
@@ -93,6 +110,12 @@ void CoutStatementNode::Interpret() {
         }
     }
 }
+void CoutStatementNode::Code(InstructionsClass& machineCode) {
+    for (auto e : this->expNodes) {
+        e->CodeEvaluate(machineCode);
+        machineCode.PopAndWrite();
+    }
+}
 
 CinStatementNode::CinStatementNode(std::vector<IdentifierNode*> vars)
     : variables(vars) {}
@@ -108,4 +131,7 @@ void CinStatementNode::Interpret() {
         std::cin >> var;
         e->SetValue(var);
     }
+}
+void CinStatementNode::Code(InstructionsClass& machineCode) {
+    // FIX: do that CALL stuff,,,
 }

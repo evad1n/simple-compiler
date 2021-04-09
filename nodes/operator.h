@@ -3,8 +3,9 @@
 
 #include "value.h"
 
+// Only one ternary operator
 class TernaryOperatorNode : public ExpressionNode {
-protected:
+private:
     ExpressionNode* first;
     ExpressionNode* second;
     ExpressionNode* third;
@@ -13,6 +14,7 @@ public:
     ~TernaryOperatorNode();
 
     int Evaluate();
+    void CodeEvaluate(InstructionsClass& machineCode);
 };
 
 class BinaryOperatorNode : public ExpressionNode {

@@ -25,6 +25,7 @@ public:
     ~DeclarationStatementNode();
 
     void Interpret();
+    void Code(InstructionsClass& machineCode);
 };
 
 class DeclarationAssignmentStatementNode : public DeclarationStatementNode {
@@ -35,10 +36,11 @@ public:
     ~DeclarationAssignmentStatementNode();
 
     void Interpret();
+    void Code(InstructionsClass& machineCode);
 };
 
 class AssignmentStatementNode : public StatementNode {
-private:
+protected:
     IdentifierNode* IDNode;
     ExpressionNode* expNode;
 public:
@@ -46,48 +48,42 @@ public:
     ~AssignmentStatementNode();
 
     void Interpret();
+    void Code(InstructionsClass& machineCode);
 };
 
-class PlusEqualsStatementNode : public StatementNode {
+class PlusEqualsStatementNode : public AssignmentStatementNode {
 private:
-    IdentifierNode* IDNode;
-    ExpressionNode* expNode;
+
 public:
     PlusEqualsStatementNode(IdentifierNode* in, ExpressionNode* en);
-    ~PlusEqualsStatementNode();
 
     void Interpret();
+    // TODO: code inherit w/ super?
 };
 
-class MinusEqualsStatementNode : public StatementNode {
+class MinusEqualsStatementNode : public AssignmentStatementNode {
 private:
-    IdentifierNode* IDNode;
-    ExpressionNode* expNode;
+
 public:
     MinusEqualsStatementNode(IdentifierNode* in, ExpressionNode* en);
-    ~MinusEqualsStatementNode();
 
     void Interpret();
 };
 
-class MultiplyEqualsStatementNode : public StatementNode {
+class MultiplyEqualsStatementNode : public AssignmentStatementNode {
 private:
-    IdentifierNode* IDNode;
-    ExpressionNode* expNode;
+
 public:
     MultiplyEqualsStatementNode(IdentifierNode* in, ExpressionNode* en);
-    ~MultiplyEqualsStatementNode();
 
     void Interpret();
 };
 
-class DivideEqualsStatementNode : public StatementNode {
+class DivideEqualsStatementNode : public AssignmentStatementNode {
 private:
-    IdentifierNode* IDNode;
-    ExpressionNode* expNode;
+
 public:
     DivideEqualsStatementNode(IdentifierNode* in, ExpressionNode* en);
-    ~DivideEqualsStatementNode();
 
     void Interpret();
 };
@@ -100,6 +96,7 @@ public:
     ~IncrementStatementNode();
 
     void Interpret();
+    void Code(InstructionsClass& machineCode);
 };
 
 class DecrementStatementNode : public StatementNode {
@@ -110,6 +107,7 @@ public:
     ~DecrementStatementNode();
 
     void Interpret();
+    void Code(InstructionsClass& machineCode);
 };
 
 #endif // DECLARATION_ASSIGNMENT_H

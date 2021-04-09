@@ -24,6 +24,7 @@ public:
     IntegerNode(int i);
     // Return the integer value
     int Evaluate();
+    void CodeEvaluate(InstructionsClass& machineCode);
 };
 
 class IdentifierNode : public ExpressionNode {
@@ -44,6 +45,7 @@ public:
     int GetIndex();
     // Return the integer value of the identifier
     int Evaluate();
+    void CodeEvaluate(InstructionsClass& machineCode);
 };
 
 #endif // VALUE_H

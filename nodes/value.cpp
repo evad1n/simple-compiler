@@ -5,9 +5,11 @@ ExpressionNode::~ExpressionNode() {}
 
 IntegerNode::IntegerNode(int i)
     : value(i) {}
-
 int IntegerNode::Evaluate() {
     return this->value;
+}
+void IntegerNode::CodeEvaluate(InstructionsClass& machineCode) {
+    machineCode.PushValue(this->value);
 }
 
 IdentifierNode::IdentifierNode(std::string label, std::vector<SymbolTable*> scopes)
@@ -41,4 +43,8 @@ int IdentifierNode::GetIndex() {
 
 int IdentifierNode::Evaluate() {
     return this->GetNearestScope()->GetValue(this->label);
+}
+
+void IdentifierNode::CodeEvaluate(InstructionsClass& machineCode) {
+    machineCode.PushVariable(this->GetIndex());
 }
