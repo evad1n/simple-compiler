@@ -93,4 +93,6 @@ int main(int argc, char const* argv[]) {
     // testNodes();
     // testTokens();
     // machine();
+
+    return 0;
 }

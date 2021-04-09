@@ -1,6 +1,6 @@
 .PHONY: gdb
 
-CXXFLAGS=-Wall -Werror
+CXXFLAGS=-Wall -Werror -fno-stack-protector -D_FORTIFY_SOURCE=0
 
 NAME=simple-compiler
 
@@ -14,6 +14,10 @@ run: compiler
 compiler:
 	g++ $(SOURCE) -o $(NAME).exe
 
+old: 
+	g++-9 $(SOURCE) -o $(NAME).exe
+	./$(NAME).exe
+
 log: logging
 	./$(NAME).exe	
 
@@ -24,7 +28,7 @@ debug:
 	g++ -g $(SOURCE) -o $(NAME).exe
 
 clean:
-	rm -f *.o *.exe
+	rm -f *.o *.exe *.out
 
 dry:
 	echo $(SOURCE)
