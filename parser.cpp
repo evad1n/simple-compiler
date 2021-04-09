@@ -11,7 +11,6 @@ Parser::Parser(Scanner* scanner)
 }
 
 Parser::~Parser() {
-    delete this->scanner;
     for (auto s : this->scopes) {
         delete s;
     }

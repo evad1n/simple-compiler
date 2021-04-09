@@ -64,11 +64,11 @@ void codeAndExecute(std::string fileName) {
     Parser parser(&scanner);
 
     // Do the parsing, which results in a parse tree.
-    StartNode* root = parser.Start();
+    StartNode* start = parser.Start();
 
     // Create the machine code instructions from the parse tree
     InstructionsClass machineCode;
-    root->Code(machineCode);
+    start->Code(machineCode);
     machineCode.Finish();
     machineCode.PrintAllMachineCodes();
 
@@ -76,7 +76,7 @@ void codeAndExecute(std::string fileName) {
     machineCode.Execute();
 
     // cleanup recursively
-    delete root;
+    delete start;
 }
 
 int main(int argc, char const* argv[]) {
@@ -86,13 +86,13 @@ int main(int argc, char const* argv[]) {
     } else {
         for (int i = 1; i < argc; i++) {
             // printTokens(argv[i]);
-            // interpret(argv[i]);
-            codeAndExecute(argv[i]);
+            interpret(argv[i]);
+            // codeAndExecute(argv[i]);
         }
     }
     // testNodes();
     // testTokens();
-    machine();
+    // machine();
 
     return 0;
 }
