@@ -6,17 +6,19 @@ NAME=simple-compiler
 
 SOURCE= *.cpp nodes/* machine-code/*
 
+INPUT=inputs/scope.c
+
 all: compiler
 
 run: compiler
-	./$(NAME).exe inputs/basic
+	./$(NAME).exe $(INPUT)
 
 compiler:
 	g++ $(SOURCE) -o $(NAME).exe
 
 machine: 
 	g++-9 $(SOURCE) -o $(NAME).exe -z execstack
-	./$(NAME).exe
+	./$(NAME).exe $(INPUT)
 
 log: logging
 	./$(NAME).exe	

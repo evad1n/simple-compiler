@@ -58,7 +58,7 @@ public:
     PlusEqualsStatementNode(IdentifierNode* in, ExpressionNode* en);
 
     void Interpret();
-    // TODO: code inherit w/ super?
+    void Code(InstructionsClass& machineCode);
 };
 
 class MinusEqualsStatementNode : public AssignmentStatementNode {
@@ -68,6 +68,7 @@ public:
     MinusEqualsStatementNode(IdentifierNode* in, ExpressionNode* en);
 
     void Interpret();
+    void Code(InstructionsClass& machineCode);
 };
 
 class MultiplyEqualsStatementNode : public AssignmentStatementNode {
@@ -77,6 +78,7 @@ public:
     MultiplyEqualsStatementNode(IdentifierNode* in, ExpressionNode* en);
 
     void Interpret();
+    void Code(InstructionsClass& machineCode);
 };
 
 class DivideEqualsStatementNode : public AssignmentStatementNode {
@@ -86,6 +88,7 @@ public:
     DivideEqualsStatementNode(IdentifierNode* in, ExpressionNode* en);
 
     void Interpret();
+    void Code(InstructionsClass& machineCode);
 };
 
 class IncrementStatementNode : public StatementNode {

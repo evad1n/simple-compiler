@@ -38,6 +38,8 @@ public:
 
     // Returns the nearest symbol table scope
     SymbolTable* GetNearestScope();
+    int GetNearestScopeIndex();
+    int GetIndexMachine();
 
     void DeclareVariable();
     void SetValue(int v);

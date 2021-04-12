@@ -29,6 +29,18 @@ SymbolTable* IdentifierNode::GetNearestScope() {
     return this->scopes[cur];
 }
 
+int IdentifierNode::GetNearestScopeIndex() {
+    int cur = this->scopes.size() - 1;
+    while (!this->scopes[cur]->Exists(this->label)) {
+        cur--;
+        if (cur <= 0) {
+            cur = 0;
+            break;
+        }
+    }
+    return cur;
+}
+
 void IdentifierNode::DeclareVariable() {
     this->scopes[this->nearest]->AddEntry(this->label);
 }
@@ -41,10 +53,14 @@ int IdentifierNode::GetIndex() {
     return this->GetNearestScope()->GetIndex(this->label);
 }
 
+int IdentifierNode::GetIndexMachine() {
+    return this->GetIndex() + this->GetNearestScopeIndex();
+}
+
 int IdentifierNode::Evaluate() {
     return this->GetNearestScope()->GetValue(this->label);
 }
 
 void IdentifierNode::CodeEvaluate(InstructionsClass& machineCode) {
-    machineCode.PushVariable(this->GetIndex());
+    machineCode.PushVariable(this->GetIndexMachine());
 }

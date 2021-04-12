@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string.h>
 #include "log.h"
 #include "token.h"
 #include "scanner.h"
@@ -70,7 +71,7 @@ void codeAndExecute(std::string fileName) {
     InstructionsClass machineCode;
     start->Code(machineCode);
     machineCode.Finish();
-    machineCode.PrintAllMachineCodes();
+    // machineCode.PrintAllMachineCodes();
 
     // Execute the machine code instructions previously created
     machineCode.Execute();
@@ -81,13 +82,27 @@ void codeAndExecute(std::string fileName) {
 
 int main(int argc, char const* argv[]) {
     LOG("LOGGING");
+    bool interpretOnly = false;
+    bool print = false;
+
     if (argc < 2) {
         std::cout << "No input files provided" << std::endl;
     } else {
         for (int i = 1; i < argc; i++) {
-            // printTokens(argv[i]);
-            interpret(argv[i]);
-            // codeAndExecute(argv[i]);
+            if (strcmp(argv[i], "-i") == 0) {
+                interpretOnly = true;
+            } else if (strcmp(argv[i], "-p") == 0) {
+                print = true;
+            } else {
+                if (print) {
+                    printTokens(argv[i]);
+                }
+                if (interpretOnly) {
+                    interpret(argv[i]);
+                } else {
+                    codeAndExecute(argv[i]);
+                }
+            }
         }
     }
     // testNodes();

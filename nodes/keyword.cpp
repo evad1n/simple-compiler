@@ -112,8 +112,12 @@ void CoutStatementNode::Interpret() {
 }
 void CoutStatementNode::Code(InstructionsClass& machineCode) {
     for (auto e : this->expNodes) {
-        e->CodeEvaluate(machineCode);
-        machineCode.PopAndWrite();
+        if (e == NULL) {
+            machineCode.WriteEndl();
+        } else {
+            e->CodeEvaluate(machineCode);
+            machineCode.PopAndWrite();
+        }
     }
 }
 

@@ -6,7 +6,7 @@ using namespace std;
 #include "instructions.h"
 
 #pragma warning( disable : 4311 )
-
+// FIX: include guards and rename lol
 const unsigned char PUSH_EBP = 0x55;
 const unsigned char MOV_EBP_ESP1 = 0x8B;
 const unsigned char MOV_EBP_ESP2 = 0xEC;
@@ -53,7 +53,7 @@ int InstructionsClass::gPrintInteger = 0;
 void HelperPrintInteger(void);
 
 void InstructionsClass::Encode(unsigned char c) {
-    if (mCurrent < MAX_INSTRUCTIONS)
+    if (mCurrent + 1 < MAX_INSTRUCTIONS)
         mCode[mCurrent++] = c;
     else {
         cerr << "Error.  Used up all " << MAX_INSTRUCTIONS
@@ -63,9 +63,8 @@ void InstructionsClass::Encode(unsigned char c) {
 }
 
 void InstructionsClass::Encode(int x) {
-    if (mCurrent + 3 < MAX_INSTRUCTIONS) {
+    if (mCurrent + 4 < MAX_INSTRUCTIONS) {
         *((int*)(&(mCode[mCurrent]))) = x;
-        cout << "encode int: " << *(int*)&mCode[mCurrent] << endl;
         mCurrent += 4;
     } else {
         cerr << "Error.  Used up all " << MAX_INSTRUCTIONS
@@ -120,12 +119,12 @@ void InstructionsClass::Finish() {
 }
 
 void InstructionsClass::Execute() {
-    cout << "About to Execute the machine code..." << endl;
+    // cout << "About to Execute the machine code..." << endl;
     void* ptr = InstructionsClass::mCode;
     void (*f)(void);
     f = (void (*)(void)) ptr;
     f();
-    cout << "\nThere and back again!" << endl << endl;
+    // cout << "\nThere and back again!" << endl << endl;
 }
 
 void InstructionsClass::PrintAllMachineCodes() {
@@ -151,7 +150,7 @@ void InstructionsClass::Call(void* function_address) {
 // prints the integer value at location gPrintInteger
 // This is called by the generated machine language code.
 void HelperPrintInteger(void) {
-    printf("%i ", InstructionsClass::gPrintInteger);
+    cout << InstructionsClass::gPrintInteger;
 }
 
 void InstructionsClass::PopAndWrite() {
@@ -187,7 +186,6 @@ void InstructionsClass::PopAndStore(unsigned int index) {
     Encode(EAX_TO_MEM);
     Encode(variable_address);
 }
-
 
 
 // prints a carriage return

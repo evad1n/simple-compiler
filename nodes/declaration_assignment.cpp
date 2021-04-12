@@ -25,7 +25,7 @@ void DeclarationAssignmentStatementNode::Interpret() {
 void DeclarationAssignmentStatementNode::Code(InstructionsClass& machineCode) {
     this->IDNode->DeclareVariable();
     this->expNode->CodeEvaluate(machineCode);
-    int index = this->IDNode->GetIndex();
+    int index = this->IDNode->GetIndexMachine();
     machineCode.PopAndStore(index);
 }
 
@@ -41,7 +41,7 @@ void AssignmentStatementNode::Interpret() {
 }
 void AssignmentStatementNode::Code(InstructionsClass& machineCode) {
     this->expNode->CodeEvaluate(machineCode);
-    int index = this->IDNode->GetIndex();
+    int index = this->IDNode->GetIndexMachine();
     machineCode.PopAndStore(index);
 }
 
@@ -51,12 +51,26 @@ void PlusEqualsStatementNode::Interpret() {
     int val = this->IDNode->Evaluate() + this->expNode->Evaluate();
     this->IDNode->SetValue(val);
 }
+void PlusEqualsStatementNode::Code(InstructionsClass& machineCode) {
+    this->expNode->CodeEvaluate(machineCode);
+    int index = this->IDNode->GetIndexMachine();
+    machineCode.PushVariable(index);
+    machineCode.PopPopAddPush();
+    machineCode.PopAndStore(index);
+}
 
 MinusEqualsStatementNode::MinusEqualsStatementNode(IdentifierNode* in, ExpressionNode* en)
     : AssignmentStatementNode(in, en) {}
 void MinusEqualsStatementNode::Interpret() {
     int val = this->IDNode->Evaluate() - this->expNode->Evaluate();
     this->IDNode->SetValue(val);
+}
+void MinusEqualsStatementNode::Code(InstructionsClass& machineCode) {
+    this->expNode->CodeEvaluate(machineCode);
+    int index = this->IDNode->GetIndexMachine();
+    machineCode.PushVariable(index);
+    machineCode.PopPopSubPush();
+    machineCode.PopAndStore(index);
 }
 
 MultiplyEqualsStatementNode::MultiplyEqualsStatementNode(IdentifierNode* in, ExpressionNode* en)
@@ -65,12 +79,26 @@ void MultiplyEqualsStatementNode::Interpret() {
     int val = this->IDNode->Evaluate() * this->expNode->Evaluate();
     this->IDNode->SetValue(val);
 }
+void MultiplyEqualsStatementNode::Code(InstructionsClass& machineCode) {
+    this->expNode->CodeEvaluate(machineCode);
+    int index = this->IDNode->GetIndexMachine();
+    machineCode.PushVariable(index);
+    machineCode.PopPopMulPush();
+    machineCode.PopAndStore(index);
+}
 
 DivideEqualsStatementNode::DivideEqualsStatementNode(IdentifierNode* in, ExpressionNode* en)
     : AssignmentStatementNode(in, en) {}
 void DivideEqualsStatementNode::Interpret() {
     int val = this->IDNode->Evaluate() / this->expNode->Evaluate();
     this->IDNode->SetValue(val);
+}
+void DivideEqualsStatementNode::Code(InstructionsClass& machineCode) {
+    this->expNode->CodeEvaluate(machineCode);
+    int index = this->IDNode->GetIndexMachine();
+    machineCode.PushVariable(index);
+    machineCode.PopPopDivPush();
+    machineCode.PopAndStore(index);
 }
 
 IncrementStatementNode::IncrementStatementNode(IdentifierNode* in)
@@ -86,7 +114,7 @@ void IncrementStatementNode::Code(InstructionsClass& machineCode) {
     this->IDNode->CodeEvaluate(machineCode);
     machineCode.PushValue(1);
     machineCode.PopPopAddPush();
-    int index = this->IDNode->GetIndex();
+    int index = this->IDNode->GetIndexMachine();
     machineCode.PopAndStore(index);
 }
 
@@ -103,6 +131,6 @@ void DecrementStatementNode::Code(InstructionsClass& machineCode) {
     this->IDNode->CodeEvaluate(machineCode);
     machineCode.PushValue(1);
     machineCode.PopPopSubPush();
-    int index = this->IDNode->GetIndex();
+    int index = this->IDNode->GetIndexMachine();
     machineCode.PopAndStore(index);
 }
