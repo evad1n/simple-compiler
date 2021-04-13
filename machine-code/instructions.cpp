@@ -6,7 +6,6 @@ using namespace std;
 #include "instructions.h"
 
 #pragma warning( disable : 4311 )
-// FIX: include guards and rename lol
 const unsigned char PUSH_EBP = 0x55;
 const unsigned char MOV_EBP_ESP1 = 0x8B;
 const unsigned char MOV_EBP_ESP2 = 0xEC;
@@ -49,6 +48,7 @@ unsigned char InstructionsClass::mCode[MAX_INSTRUCTIONS] = { 0 };
 
 // A location to store an integer that is about to be printed.
 int InstructionsClass::gPrintInteger = 0;
+int InstructionsClass::gReadInteger = 0;
 
 void HelperPrintInteger(void);
 
@@ -151,6 +151,27 @@ void InstructionsClass::Call(void* function_address) {
 // This is called by the generated machine language code.
 void HelperPrintInteger(void) {
     cout << InstructionsClass::gPrintInteger;
+}
+
+void HelperReadInteger(void) {
+    cout << ">> ";
+    cin >> InstructionsClass::gReadInteger;
+}
+
+void InstructionsClass::ReadAndStoreVariable(unsigned int index) {
+    int* variable_address = GetMem(index);
+
+    // Read in integer
+    Call((void*)HelperReadInteger);
+    // Push on stack
+    Encode(MEM_TO_EAX);
+    Encode(&gReadInteger);
+    Encode(PUSH_EAX);
+
+    // Store
+    Encode(POP_EAX);
+    Encode(EAX_TO_MEM);
+    Encode(variable_address);
 }
 
 void InstructionsClass::PopAndWrite() {

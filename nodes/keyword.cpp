@@ -137,5 +137,7 @@ void CinStatementNode::Interpret() {
     }
 }
 void CinStatementNode::Code(InstructionsClass& machineCode) {
-    // FIX: do that CALL stuff,,,
+    for (auto e : this->variables) {
+        machineCode.ReadAndStoreVariable(e->GetIndexMachine());
+    }
 }

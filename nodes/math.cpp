@@ -58,9 +58,8 @@ int ExponentNode::Evaluate() {
 }
 void ExponentNode::CodeEvaluate(InstructionsClass& machineCode) {
     // FIX:
-    this->left->CodeEvaluate(machineCode);
-    this->right->CodeEvaluate(machineCode);
-    machineCode.PopPopMulPush();
+    int val = pow(this->left->Evaluate(), this->right->Evaluate());
+    machineCode.PushValue(val);
 }
 
 NegativeNode::NegativeNode(ExpressionNode* val)

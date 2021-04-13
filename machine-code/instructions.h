@@ -1,5 +1,5 @@
-#ifndef INSTRUCTIONS
-#define INSTRUCTIONS 
+#if !defined(INSTRUCTIONS_H)
+#define INSTRUCTIONS_H
 
 const int MAX_INSTRUCTIONS = 5000;
 const int MAX_DATA = 5000;
@@ -22,6 +22,7 @@ public:
     void PushValue(int value);  // used by IntegerNode
     void Call(void* function_address);
     void PopAndWrite(); // used by CoutStatementNode
+    void ReadAndStoreVariable(unsigned int index);
     void WriteEndl();
     int* GetMem(int index); // index is 0 based.
     void PushVariable(unsigned int index); // used by IdentifierNode
@@ -60,6 +61,7 @@ public:
     void SetOffset(unsigned char* codeAddress, int offset); // After a jump offset becomes known, this method can be used to go back and set it.
 
     static int gPrintInteger;
+    static int gReadInteger;
 private:
 
     static unsigned char mCode[MAX_INSTRUCTIONS]; // NOTE: Using an stl vector does not work, because they relocate their array sometimes.
@@ -67,4 +69,4 @@ private:
     int mData[MAX_DATA];
 };
 
-#endif
+#endif // INSTRUCTIONS_H

@@ -13,4 +13,14 @@ void main() {
     cout << x << endl;
     x--;
     cout << x << endl;
+
+    int y;
+    cin >> y;
+    cout << y << endl;
+
+    int z = 5;
+
+    cout << endl << x << endl;
+    cout << y << endl;
+    cout << z << endl;
 }
