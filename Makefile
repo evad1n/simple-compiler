@@ -11,7 +11,7 @@ INPUT=inputs/scope.c
 all: compiler
 
 run: compiler
-	./$(NAME).exe $(INPUT)
+	./$(NAME).exe -i $(INPUT)
 
 compiler:
 	g++ $(SOURCE) -o $(NAME).exe

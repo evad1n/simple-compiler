@@ -9,8 +9,7 @@
 class Parser {
 private:
     Scanner* scanner;
-    std::vector<SymbolTable*> scopes;
-    std::vector<SymbolTable*> scopeStack;
+    SymbolTable table;
     int currentScope;
 
     Token Match(TokenType expected);

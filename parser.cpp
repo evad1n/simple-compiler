@@ -4,17 +4,11 @@
 
 Parser::Parser(Scanner* scanner)
     : scanner(scanner) {
-    SymbolTable* global = new SymbolTable();
-    this->scopes = std::vector<SymbolTable*>{ global };
-    this->scopeStack = std::vector<SymbolTable*>{ global };
+    this->table = SymbolTable();
     this->currentScope = 0;
 }
 
-Parser::~Parser() {
-    for (auto s : this->scopes) {
-        delete s;
-    }
-}
+Parser::~Parser() {}
 
 Token Parser::Match(TokenType expected) {
     Token t = this->scanner->GetNextToken();
@@ -46,15 +40,11 @@ ProgramNode* Parser::Program() {
 BlockNode* Parser::Block(bool newScope) {
     this->Match(LEFT_BRACE_TOKEN);
     if (newScope) {
-        this->currentScope++;
-        SymbolTable* scope = new SymbolTable();
-        this->scopes.push_back(scope);
-        this->scopeStack.push_back(scope);
+        this->table.NewScope();
     }
     StatementGroupNode* sgn = this->StatementGroup();
     if (newScope) {
-        this->scopeStack.pop_back();
-        this->currentScope--;
+        this->table.LeaveScope();
     }
     this->Match(RIGHT_BRACE_TOKEN);
     return new BlockNode(sgn);
@@ -226,8 +216,7 @@ ForStatementNode* Parser::ForStatement() {
     // Create new scope
     this->currentScope++;
     SymbolTable* scope = new SymbolTable();
-    this->scopes.push_back(scope);
-    this->scopeStack.push_back(scope);
+    this->table.NewScope();
 
     this->Match(LEFT_PAREN_TOKEN);
     StatementNode* initializer = this->Statement();
@@ -237,8 +226,8 @@ ForStatementNode* Parser::ForStatement() {
     this->Match(RIGHT_PAREN_TOKEN);
     BlockNode* bn = this->Block(false);
     // Exit out of scope
-    this->scopeStack.pop_back();
-    this->currentScope--;
+    this->table.LeaveScope();
+
     return new ForStatementNode(initializer, comparison, incrementer, bn);
 }
 
@@ -247,8 +236,8 @@ ForeStatementNode* Parser::ForeStatement() {
     // Create new scope
     this->currentScope++;
     SymbolTable* scope = new SymbolTable();
-    this->scopes.push_back(scope);
-    this->scopeStack.push_back(scope);
+    this->table.NewScope();
+
 
     this->Match(LEFT_PAREN_TOKEN);
     StatementNode* initializer = this->Statement();
@@ -258,8 +247,8 @@ ForeStatementNode* Parser::ForeStatement() {
     this->Match(RIGHT_PAREN_TOKEN);
     BlockNode* bn = this->Block(false);
     // Exit out of scope
-    this->scopeStack.pop_back();
-    this->currentScope--;
+    this->table.LeaveScope();
+
     return new ForeStatementNode(initializer, comparison, incrementer, bn);
 }
 
@@ -509,7 +498,7 @@ ExpressionNode* Parser::Factor() {
 
 IdentifierNode* Parser::Identifier() {
     Token t = this->Match(IDENTIFIER_TOKEN);
-    return new IdentifierNode(t.GetLexeme(), this->scopeStack);
+    return new IdentifierNode(t.GetLexeme(), &this->table);
 }
 
 IntegerNode* Parser::Integer() {

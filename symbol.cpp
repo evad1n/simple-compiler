@@ -2,14 +2,13 @@
 #include <vector>
 #include "symbol.h"
 
-SymbolTable::SymbolTable()
-    : variables(std::vector<Variable>{}) {}
+SymbolTable::SymbolTable() {}
 
 SymbolTable::~SymbolTable() {}
 
 bool SymbolTable::Exists(const std::string& s) {
-    for (auto v : this->variables) {
-        if (v.label == s) {
+    for (int i = this->variables.size() - 1; i > this->NearestScope(); i--) {
+        if (this->variables[i].label == s) {
             return true;
         }
     }
@@ -45,7 +44,8 @@ void SymbolTable::SetValue(const std::string& s, int v) {
 }
 
 int SymbolTable::GetIndex(const std::string& s) {
-    for (int i = 0; i < this->variables.size(); i++) {
+    // Reverse iterate so nearest scope is taken
+    for (int i = this->variables.size() - 1; i >= 0; i--) {
         if (this->variables[i].label == s) {
             return i;
         }
@@ -55,4 +55,19 @@ int SymbolTable::GetIndex(const std::string& s) {
 
 int SymbolTable::GetCount() {
     return this->variables.size();
+}
+
+void SymbolTable::NewScope() {
+    this->scopeMarkers.push_back(this->GetCount());
+}
+
+void SymbolTable::LeaveScope() {
+    for (int i = this->variables.size() - 1; i >= this->NearestScope(); i--) {
+        this->variables.pop_back();
+    }
+    this->scopeMarkers.pop_back();
+}
+
+int SymbolTable::NearestScope() {
+    return this->scopeMarkers[this->scopeMarkers.size() - 1];
 }

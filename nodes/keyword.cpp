@@ -71,7 +71,7 @@ void ForStatementNode::Interpret() {
     }
 }
 void ForStatementNode::Code(InstructionsClass& machineCode) {
-
+    // FIX:
 }
 
 ForeStatementNode::ForeStatementNode(
@@ -138,6 +138,6 @@ void CinStatementNode::Interpret() {
 }
 void CinStatementNode::Code(InstructionsClass& machineCode) {
     for (auto e : this->variables) {
-        machineCode.ReadAndStoreVariable(e->GetIndexMachine());
+        machineCode.ReadAndStoreVariable(e->GetIndex());
     }
 }

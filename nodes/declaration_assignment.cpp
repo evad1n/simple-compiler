@@ -25,7 +25,7 @@ void DeclarationAssignmentStatementNode::Interpret() {
 void DeclarationAssignmentStatementNode::Code(InstructionsClass& machineCode) {
     this->IDNode->DeclareVariable();
     this->expNode->CodeEvaluate(machineCode);
-    int index = this->IDNode->GetIndexMachine();
+    int index = this->IDNode->GetIndex();
     machineCode.PopAndStore(index);
 }
 
@@ -41,7 +41,7 @@ void AssignmentStatementNode::Interpret() {
 }
 void AssignmentStatementNode::Code(InstructionsClass& machineCode) {
     this->expNode->CodeEvaluate(machineCode);
-    int index = this->IDNode->GetIndexMachine();
+    int index = this->IDNode->GetIndex();
     machineCode.PopAndStore(index);
 }
 
@@ -52,7 +52,7 @@ void PlusEqualsStatementNode::Interpret() {
     this->IDNode->SetValue(val);
 }
 void PlusEqualsStatementNode::Code(InstructionsClass& machineCode) {
-    int index = this->IDNode->GetIndexMachine();
+    int index = this->IDNode->GetIndex();
     machineCode.PushVariable(index);
     this->expNode->CodeEvaluate(machineCode);
     machineCode.PopPopAddPush();
@@ -66,7 +66,7 @@ void MinusEqualsStatementNode::Interpret() {
     this->IDNode->SetValue(val);
 }
 void MinusEqualsStatementNode::Code(InstructionsClass& machineCode) {
-    int index = this->IDNode->GetIndexMachine();
+    int index = this->IDNode->GetIndex();
     machineCode.PushVariable(index);
     this->expNode->CodeEvaluate(machineCode);
     machineCode.PopPopSubPush();
@@ -80,7 +80,7 @@ void MultiplyEqualsStatementNode::Interpret() {
     this->IDNode->SetValue(val);
 }
 void MultiplyEqualsStatementNode::Code(InstructionsClass& machineCode) {
-    int index = this->IDNode->GetIndexMachine();
+    int index = this->IDNode->GetIndex();
     machineCode.PushVariable(index);
     this->expNode->CodeEvaluate(machineCode);
     machineCode.PopPopMulPush();
@@ -94,7 +94,7 @@ void DivideEqualsStatementNode::Interpret() {
     this->IDNode->SetValue(val);
 }
 void DivideEqualsStatementNode::Code(InstructionsClass& machineCode) {
-    int index = this->IDNode->GetIndexMachine();
+    int index = this->IDNode->GetIndex();
     machineCode.PushVariable(index);
     this->expNode->CodeEvaluate(machineCode);
     machineCode.PopPopDivPush();
@@ -114,7 +114,7 @@ void IncrementStatementNode::Code(InstructionsClass& machineCode) {
     this->IDNode->CodeEvaluate(machineCode);
     machineCode.PushValue(1);
     machineCode.PopPopAddPush();
-    int index = this->IDNode->GetIndexMachine();
+    int index = this->IDNode->GetIndex();
     machineCode.PopAndStore(index);
 }
 
@@ -131,6 +131,6 @@ void DecrementStatementNode::Code(InstructionsClass& machineCode) {
     this->IDNode->CodeEvaluate(machineCode);
     machineCode.PushValue(1);
     machineCode.PopPopSubPush();
-    int index = this->IDNode->GetIndexMachine();
+    int index = this->IDNode->GetIndex();
     machineCode.PopAndStore(index);
 }

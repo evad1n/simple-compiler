@@ -13,6 +13,7 @@ private:
     };
 
     std::vector<Variable> variables;
+    std::vector<int> scopeMarkers;
 public:
     SymbolTable();
     ~SymbolTable();
@@ -36,6 +37,13 @@ public:
     // returns the current number of variables in the symbol
     // table. 
     int GetCount();
+
+    int NearestScope();
+
+    void NewScope();
+
+    // Remove all variables up to last scope
+    void LeaveScope();
 };
 
 

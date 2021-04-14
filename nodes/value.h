@@ -30,16 +30,10 @@ public:
 class IdentifierNode : public ExpressionNode {
 private:
     std::string label;
-    std::vector<SymbolTable*> scopes;
-    int nearest;
+    SymbolTable* table;
 public:
-    IdentifierNode(std::string label, std::vector<SymbolTable*> scopes);
+    IdentifierNode(std::string label, SymbolTable* table);
     ~IdentifierNode();
-
-    // Returns the nearest symbol table scope
-    SymbolTable* GetNearestScope();
-    int GetNearestScopeIndex();
-    int GetIndexMachine();
 
     void DeclareVariable();
     void SetValue(int v);
