@@ -16,6 +16,23 @@ public:
     virtual void CodeEvaluate(InstructionsClass& machineCode) = 0;
 };
 
+class TrueNode : public ExpressionNode {
+private:
+public:
+    TrueNode();
+    // Return the integer value
+    int Evaluate();
+    void CodeEvaluate(InstructionsClass& machineCode);
+};
+
+class FalseNode : public ExpressionNode {
+private:
+public:
+    FalseNode();
+    // Return the integer value
+    int Evaluate();
+    void CodeEvaluate(InstructionsClass& machineCode);
+};
 
 class IntegerNode : public ExpressionNode {
 private:

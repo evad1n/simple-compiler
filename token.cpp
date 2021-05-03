@@ -6,7 +6,7 @@
 
 const std::string gTokenTypeNames[] = {
     // Reserved words
-    "VOID", "MAIN", "INT", "COUT", "CIN", "ENDL", "IF", "ELSE", "WHILE", "FOR", "FORE","RESERVED_COUNT",
+    "VOID", "MAIN", "TRUE", "FALSE", "INT", "COUT", "CIN", "ENDL", "IF", "ELSE", "WHILE", "FOR", "FORE","RESERVED_COUNT",
     // Scope tokens
     "SEMICOLON",
     "LEFT_PAREN", "RIGHT_PAREN",

@@ -474,6 +474,14 @@ ExpressionNode* Parser::Factor() {
         this->Match(t);
         en = new NotNode(this->Expression());
         break;
+    case TRUE_TOKEN:
+        this->Match(t);
+        en = new TrueNode();
+        break;
+    case FALSE_TOKEN:
+        this->Match(t);
+        en = new FalseNode();
+        break;
     case NEGATIVE_TOKEN:
         this->Match(t);
         en = new NegativeNode(this->Expression());
