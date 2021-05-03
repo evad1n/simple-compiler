@@ -38,6 +38,11 @@ const unsigned char JGE = 0x7D;
 const unsigned char JE = 0x74;
 const unsigned char JNE = 0x75;
 
+// Right shift
+const unsigned char SAR_EAX_ECX1 = 0xD3;
+const unsigned char SAR_EAX_ECX2 = 0xF8;
+const unsigned char POP_ECX = 0x59;
+
 //const unsigned char JE_WORD = 0x84; // 2 byte jump does NOT work!
 const unsigned char JE_FAR1 = 0x0f; // 4 byte jump
 const unsigned char JE_FAR2 = 0x84; // 4 byte jump
@@ -249,6 +254,14 @@ void InstructionsClass::PopPopDivPush() {
     Encode(CDQ);// Necessary to clear the D register for a 64 bit divide.
     Encode(DIV_EAX_EBX1);
     Encode(DIV_EAX_EBX2);
+    Encode(PUSH_EAX);
+}
+
+void InstructionsClass::PopPopShiftRightPush() {
+    Encode(POP_ECX);
+    Encode(POP_EAX);
+    Encode(SAR_EAX_ECX1);
+    Encode(SAR_EAX_ECX2);
     Encode(PUSH_EAX);
 }
 

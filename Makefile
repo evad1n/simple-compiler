@@ -16,8 +16,10 @@ run: compiler
 compiler:
 	g++ $(SOURCE) -o $(NAME).exe
 
-machine: 
+machine-compiler:
 	g++-9 $(SOURCE) -o $(NAME).exe -z execstack
+
+machine: machine-compiler
 	./$(NAME).exe $(INPUT)
 
 log: logging

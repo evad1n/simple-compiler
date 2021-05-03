@@ -90,7 +90,7 @@ int RightShiftNode::Evaluate() {
     return this->left->Evaluate() >> this->right->Evaluate();
 }
 void RightShiftNode::CodeEvaluate(InstructionsClass& machineCode) {
-    // FIX:
-    int val = pow(this->left->Evaluate(), this->right->Evaluate());
-    machineCode.PushValue(val);
+    this->left->CodeEvaluate(machineCode);
+    this->right->CodeEvaluate(machineCode);
+    machineCode.PopPopShiftRightPush();
 }

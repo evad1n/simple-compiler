@@ -33,7 +33,9 @@ BlockNode::~BlockNode() {
     delete this->sgNode;
 }
 void BlockNode::Code(InstructionsClass& machineCode) {
+    this->table->NewScope();
     this->sgNode->Code(machineCode);
+    this->table->LeaveScope();
 }
 void BlockNode::Interpret() {
     this->table->NewScope();

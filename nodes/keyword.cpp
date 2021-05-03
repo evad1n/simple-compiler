@@ -75,7 +75,8 @@ void ForStatementNode::Interpret() {
     this->table->LeaveScope();
 }
 void ForStatementNode::Code(InstructionsClass& machineCode) {
-
+    this->table->NewScope();
+    this->table->LeaveScope();
 }
 
 ForeStatementNode::ForeStatementNode(
@@ -97,7 +98,8 @@ void ForeStatementNode::Interpret() {
     this->table->LeaveScope();
 }
 void ForeStatementNode::Code(InstructionsClass& machineCode) {
-
+    this->table->NewScope();
+    this->table->LeaveScope();
 }
 
 
