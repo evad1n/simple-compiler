@@ -72,3 +72,25 @@ void NegativeNode::CodeEvaluate(InstructionsClass& machineCode) {
     machineCode.PushValue(-1);
     machineCode.PopPopMulPush();
 }
+
+LeftShiftNode::LeftShiftNode(ExpressionNode* left, ExpressionNode* right)
+    : BinaryOperatorNode(left, right) {}
+int LeftShiftNode::Evaluate() {
+    return this->left->Evaluate() << this->right->Evaluate();
+}
+void LeftShiftNode::CodeEvaluate(InstructionsClass& machineCode) {
+    // FIX:
+    int val = pow(this->left->Evaluate(), this->right->Evaluate());
+    machineCode.PushValue(val);
+}
+
+RightShiftNode::RightShiftNode(ExpressionNode* left, ExpressionNode* right)
+    : BinaryOperatorNode(left, right) {}
+int RightShiftNode::Evaluate() {
+    return this->left->Evaluate() >> this->right->Evaluate();
+}
+void RightShiftNode::CodeEvaluate(InstructionsClass& machineCode) {
+    // FIX:
+    int val = pow(this->left->Evaluate(), this->right->Evaluate());
+    machineCode.PushValue(val);
+}

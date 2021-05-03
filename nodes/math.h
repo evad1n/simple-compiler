@@ -9,6 +9,8 @@ class MinusNode;
 class TimesNode;
 class DividesNode;
 class ExponentNode;
+class RightShiftNode;
+class LeftShiftNode;
 
 class PlusNode : public BinaryOperatorNode {
 private:
@@ -60,6 +62,24 @@ private:
 
 public:
     NegativeNode(ExpressionNode* val);
+    int Evaluate();
+    void CodeEvaluate(InstructionsClass& machineCode);
+};
+
+class LeftShiftNode : public BinaryOperatorNode {
+private:
+
+public:
+    LeftShiftNode(ExpressionNode* left, ExpressionNode* right);
+    int Evaluate();
+    void CodeEvaluate(InstructionsClass& machineCode);
+};
+
+class RightShiftNode : public BinaryOperatorNode {
+private:
+
+public:
+    RightShiftNode(ExpressionNode* left, ExpressionNode* right);
     int Evaluate();
     void CodeEvaluate(InstructionsClass& machineCode);
 };

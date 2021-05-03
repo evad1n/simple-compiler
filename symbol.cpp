@@ -7,7 +7,7 @@ SymbolTable::SymbolTable() {}
 SymbolTable::~SymbolTable() {}
 
 bool SymbolTable::Exists(const std::string& s) {
-    for (int i = this->variables.size() - 1; i > this->NearestScope(); i--) {
+    for (int i = this->variables.size() - 1; i >= this->NearestScope(); i--) {
         if (this->variables[i].label == s) {
             return true;
         }

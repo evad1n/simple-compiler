@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "../machine-code/instructions.h"
+#include "../symbol.h"
 
 class Node;
 class StartNode;
@@ -49,8 +50,9 @@ public:
 class BlockNode : public StatementNode {
 private:
     StatementGroupNode* sgNode;
+    SymbolTable* table;
 public:
-    BlockNode(StatementGroupNode* sgn);
+    BlockNode(StatementGroupNode* sgn, SymbolTable* table);
     ~BlockNode();
 
     void Interpret();

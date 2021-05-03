@@ -10,12 +10,11 @@ class Parser {
 private:
     Scanner* scanner;
     SymbolTable table;
-    int currentScope;
 
     Token Match(TokenType expected);
 
     ProgramNode* Program();
-    BlockNode* Block(bool newScope = true);
+    BlockNode* Block();
     StatementGroupNode* StatementGroup();
     StatementNode* Statement();
     // Statements
@@ -29,17 +28,18 @@ private:
     CoutStatementNode* CoutStatement();
     CinStatementNode* CinStatement();
 
-    ExpressionNode* Expression();
-    ExpressionNode* Exponent();
-    ExpressionNode* TimesDivide();
-    ExpressionNode* PlusMinus();
-    ExpressionNode* Relational();
-    ExpressionNode* BitwiseAnd();
-    ExpressionNode* BitwiseOr();
-    ExpressionNode* And();
-    ExpressionNode* Or();
-    ExpressionNode* Ternary();
-    ExpressionNode* Factor();
+    ExpressionNode* Expression(bool parens = false);
+    ExpressionNode* Ternary(bool parens = false);
+    ExpressionNode* Or(bool parens = false);
+    ExpressionNode* And(bool parens = false);
+    ExpressionNode* BitwiseOr(bool parens = false);
+    ExpressionNode* BitwiseAnd(bool parens = false);
+    ExpressionNode* Relational(bool parens = false);
+    ExpressionNode* BitShift(bool parens = false);
+    ExpressionNode* PlusMinus(bool parens = false);
+    ExpressionNode* TimesDivide(bool parens = false);
+    ExpressionNode* Exponent(bool parens = false);
+    ExpressionNode* Factor(bool parens = false);
 
     IdentifierNode* Identifier();
     IntegerNode* Integer();

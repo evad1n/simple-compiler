@@ -16,22 +16,6 @@ void testTokens() {
     std::cout << tok1 << std::endl;
 }
 
-void testNodes() {
-    StartNode* start = new StartNode(new ProgramNode(new BlockNode(new StatementGroupNode())));
-    std::cout << "deleting start" << std::endl;
-    delete start;
-
-    PlusNode* plus = new PlusNode(new IntegerNode(40), new IntegerNode(50));
-    std::cout << plus->Evaluate() << std::endl;
-    std::cout << "deleting plusNode" << std::endl;
-    delete plus;
-
-    LessEqualNode* lte = new LessEqualNode(new IntegerNode(40), new IntegerNode(50));
-    std::cout << lte->Evaluate() << std::endl;
-    std::cout << "deleting lessEqualNode" << std::endl;
-    delete lte;
-}
-
 void printTokens(std::string fileName) {
     Scanner scanner(fileName);
     Token t;
@@ -105,7 +89,6 @@ int main(int argc, char const* argv[]) {
             }
         }
     }
-    // testNodes();
     // testTokens();
     // machine();
 

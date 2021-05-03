@@ -5,7 +5,6 @@
 Parser::Parser(Scanner* scanner)
     : scanner(scanner) {
     this->table = SymbolTable();
-    this->currentScope = 0;
 }
 
 Parser::~Parser() {}
@@ -37,17 +36,11 @@ ProgramNode* Parser::Program() {
     return new ProgramNode(bn);
 }
 
-BlockNode* Parser::Block(bool newScope) {
+BlockNode* Parser::Block() {
     this->Match(LEFT_BRACE_TOKEN);
-    if (newScope) {
-        this->table.NewScope();
-    }
     StatementGroupNode* sgn = this->StatementGroup();
-    if (newScope) {
-        this->table.LeaveScope();
-    }
     this->Match(RIGHT_BRACE_TOKEN);
-    return new BlockNode(sgn);
+    return new BlockNode(sgn, &this->table);
 }
 
 StatementGroupNode* Parser::StatementGroup() {
@@ -213,10 +206,6 @@ WhileStatementNode* Parser::WhileStatement() {
 
 ForStatementNode* Parser::ForStatement() {
     this->Match(FOR_TOKEN);
-    // Create new scope
-    this->currentScope++;
-    SymbolTable* scope = new SymbolTable();
-    this->table.NewScope();
 
     this->Match(LEFT_PAREN_TOKEN);
     StatementNode* initializer = this->Statement();
@@ -224,20 +213,13 @@ ForStatementNode* Parser::ForStatement() {
     this->Match(SEMICOLON_TOKEN);
     StatementNode* incrementer = this->AssignmentStatement(false);
     this->Match(RIGHT_PAREN_TOKEN);
-    BlockNode* bn = this->Block(false);
-    // Exit out of scope
-    this->table.LeaveScope();
+    BlockNode* bn = this->Block();
 
-    return new ForStatementNode(initializer, comparison, incrementer, bn);
+    return new ForStatementNode(initializer, comparison, incrementer, bn, &this->table);
 }
 
 ForeStatementNode* Parser::ForeStatement() {
     this->Match(FORE_TOKEN);
-    // Create new scope
-    this->currentScope++;
-    SymbolTable* scope = new SymbolTable();
-    this->table.NewScope();
-
 
     this->Match(LEFT_PAREN_TOKEN);
     StatementNode* initializer = this->Statement();
@@ -245,11 +227,9 @@ ForeStatementNode* Parser::ForeStatement() {
     this->Match(SEMICOLON_TOKEN);
     StatementNode* incrementer = this->AssignmentStatement(false);
     this->Match(RIGHT_PAREN_TOKEN);
-    BlockNode* bn = this->Block(false);
-    // Exit out of scope
-    this->table.LeaveScope();
+    BlockNode* bn = this->Block();
 
-    return new ForeStatementNode(initializer, comparison, incrementer, bn);
+    return new ForeStatementNode(initializer, comparison, incrementer, bn, &this->table);
 }
 
 CoutStatementNode* Parser::CoutStatement() {
@@ -285,168 +265,13 @@ CinStatementNode* Parser::CinStatement() {
 
 // Expressions
 
-ExpressionNode* Parser::Expression() {
+ExpressionNode* Parser::Expression(bool parens) {
     // Return lowest precedence operator first
-    return this->Ternary();
+    return this->Ternary(parens);
 }
 
-ExpressionNode* Parser::Exponent() {
-    ExpressionNode* en = this->Factor();
-
-    for (;;) {
-        TokenType t = this->scanner->PeekNextToken().GetTokenType();
-        switch (t) {
-        case EXPONENT_TOKEN:
-            this->Match(t);
-            en = new ExponentNode(en, this->Factor());
-            break;
-        default:
-            return en;
-        }
-    }
-}
-
-ExpressionNode* Parser::TimesDivide() {
-    ExpressionNode* en = this->Exponent();
-
-    for (;;) {
-        TokenType t = this->scanner->PeekNextToken().GetTokenType();
-        switch (t) {
-        case MULTIPLY_TOKEN:
-            this->Match(t);
-            en = new TimesNode(en, this->Factor());
-            break;
-        case DIVIDE_TOKEN:
-            this->Match(t);
-            en = new DivideNode(en, this->Factor());
-            break;
-        default:
-            return en;
-        }
-    }
-}
-
-ExpressionNode* Parser::PlusMinus() {
-    ExpressionNode* en = this->TimesDivide();
-
-    for (;;) {
-        TokenType t = this->scanner->PeekNextToken().GetTokenType();
-        switch (t) {
-        case PLUS_TOKEN:
-            this->Match(t);
-            en = new PlusNode(en, this->TimesDivide());
-            break;
-        case MINUS_TOKEN:
-            this->Match(t);
-            en = new MinusNode(en, this->TimesDivide());
-            break;
-        default:
-            return en;
-        }
-    }
-}
-
-ExpressionNode* Parser::Relational() {
-    ExpressionNode* en = this->PlusMinus();
-
-    TokenType t = this->scanner->PeekNextToken().GetTokenType();
-    switch (t) {
-    case LESS_TOKEN:
-        this->Match(t);
-        en = new LessNode(en, this->PlusMinus());
-        break;
-    case LESS_EQUAL_TOKEN:
-        this->Match(t);
-        en = new LessEqualNode(en, this->PlusMinus());
-        break;
-    case GREATER_TOKEN:
-        this->Match(t);
-        en = new GreaterNode(en, this->PlusMinus());
-        break;
-    case GREATER_EQUAL_TOKEN:
-        this->Match(t);
-        en = new GreaterEqualNode(en, this->PlusMinus());
-        break;
-    case EQUAL_TOKEN:
-        this->Match(t);
-        en = new EqualNode(en, this->PlusMinus());
-        break;
-    case NOT_EQUAL_TOKEN:
-        this->Match(t);
-        en = new NotEqualNode(en, this->PlusMinus());
-        break;
-    }
-    return en;
-}
-
-
-
-ExpressionNode* Parser::BitwiseAnd() {
-    ExpressionNode* en = this->Relational();
-
-    for (;;) {
-        TokenType t = this->scanner->PeekNextToken().GetTokenType();
-        switch (t) {
-        case BITWISE_AND_TOKEN:
-            this->Match(t);
-            en = new BitwiseAndNode(en, this->PlusMinus());
-            break;
-        default:
-            return en;
-        }
-    }
-}
-
-ExpressionNode* Parser::BitwiseOr() {
-    ExpressionNode* en = this->BitwiseAnd();
-
-    for (;;) {
-        TokenType t = this->scanner->PeekNextToken().GetTokenType();
-        switch (t) {
-        case BITWISE_OR_TOKEN:
-            this->Match(t);
-            en = new BitwiseOrNode(en, this->PlusMinus());
-            break;
-        default:
-            return en;
-        }
-    }
-}
-
-ExpressionNode* Parser::And() {
-    ExpressionNode* en = this->BitwiseOr();
-
-    for (;;) {
-        TokenType t = this->scanner->PeekNextToken().GetTokenType();
-        switch (t) {
-        case AND_TOKEN:
-            this->Match(t);
-            en = new AndNode(en, this->Expression());
-            break;
-        default:
-            return en;
-        }
-    }
-}
-
-ExpressionNode* Parser::Or() {
-    ExpressionNode* en = this->And();
-
-    for (;;) {
-        TokenType t = this->scanner->PeekNextToken().GetTokenType();
-        switch (t) {
-        case OR_TOKEN:
-            this->Match(t);
-            en = new OrNode(en, this->Expression());
-            break;
-        default:
-            return en;
-        }
-    }
-}
-
-ExpressionNode* Parser::Ternary() {
-    ExpressionNode* en = this->Or();
+ExpressionNode* Parser::Ternary(bool parens) {
+    ExpressionNode* en = this->Or(parens);
 
     for (;;) {
         TokenType t = this->scanner->PeekNextToken().GetTokenType();
@@ -454,9 +279,9 @@ ExpressionNode* Parser::Ternary() {
         case TERNARY_QUESTION_TOKEN:
         {
             this->Match(t);
-            ExpressionNode* second = this->Expression();
+            ExpressionNode* second = this->Or();
             this->Match(TERNARY_COLON_TOKEN);
-            en = new TernaryOperatorNode(en, second, this->Expression());
+            en = new TernaryOperatorNode(en, second, this->Or(parens));
             break;
         }
         default:
@@ -465,14 +290,190 @@ ExpressionNode* Parser::Ternary() {
     }
 }
 
+ExpressionNode* Parser::Or(bool parens) {
+    ExpressionNode* en = this->And(parens);
 
-ExpressionNode* Parser::Factor() {
+    for (;;) {
+        TokenType t = this->scanner->PeekNextToken().GetTokenType();
+        switch (t) {
+        case OR_TOKEN:
+            this->Match(t);
+            en = new OrNode(en, this->And(parens));
+            break;
+        default:
+            return en;
+        }
+    }
+}
+
+ExpressionNode* Parser::And(bool parens) {
+    ExpressionNode* en = this->BitwiseOr(parens);
+
+    for (;;) {
+        TokenType t = this->scanner->PeekNextToken().GetTokenType();
+        switch (t) {
+        case AND_TOKEN:
+            this->Match(t);
+            en = new AndNode(en, this->BitwiseOr(parens));
+            break;
+        default:
+            return en;
+        }
+    }
+}
+
+ExpressionNode* Parser::BitwiseOr(bool parens) {
+    ExpressionNode* en = this->BitwiseAnd(parens);
+
+    for (;;) {
+        TokenType t = this->scanner->PeekNextToken().GetTokenType();
+        switch (t) {
+        case BITWISE_OR_TOKEN:
+            this->Match(t);
+            en = new BitwiseOrNode(en, this->BitwiseAnd(parens));
+            break;
+        default:
+            return en;
+        }
+    }
+}
+
+ExpressionNode* Parser::BitwiseAnd(bool parens) {
+    ExpressionNode* en = this->Relational(parens);
+
+    for (;;) {
+        TokenType t = this->scanner->PeekNextToken().GetTokenType();
+        switch (t) {
+        case BITWISE_AND_TOKEN:
+            this->Match(t);
+            en = new BitwiseAndNode(en, this->Relational(parens));
+            break;
+        default:
+            return en;
+        }
+    }
+}
+
+ExpressionNode* Parser::Relational(bool parens) {
+    ExpressionNode* en = this->BitShift(parens);
+
+    TokenType t = this->scanner->PeekNextToken().GetTokenType();
+    switch (t) {
+    case LESS_TOKEN:
+        this->Match(t);
+        en = new LessNode(en, this->BitShift(parens));
+        break;
+    case LESS_EQUAL_TOKEN:
+        this->Match(t);
+        en = new LessEqualNode(en, this->BitShift(parens));
+        break;
+    case GREATER_TOKEN:
+        this->Match(t);
+        en = new GreaterNode(en, this->BitShift(parens));
+        break;
+    case GREATER_EQUAL_TOKEN:
+        this->Match(t);
+        en = new GreaterEqualNode(en, this->BitShift(parens));
+        break;
+    case EQUAL_TOKEN:
+        this->Match(t);
+        en = new EqualNode(en, this->BitShift(parens));
+        break;
+    case NOT_EQUAL_TOKEN:
+        this->Match(t);
+        en = new NotEqualNode(en, this->BitShift(parens));
+        break;
+    }
+    return en;
+}
+
+ExpressionNode* Parser::BitShift(bool parens) {
+    ExpressionNode* en = this->PlusMinus(parens);
+
+    if (parens) {
+        for (;;) {
+            TokenType t = this->scanner->PeekNextToken().GetTokenType();
+            switch (t) {
+            case INSERTION_TOKEN:
+                this->Match(t);
+                en = new LeftShiftNode(en, this->PlusMinus(parens));
+                break;
+            case EXTRACTION_TOKEN:
+                this->Match(t);
+                en = new RightShiftNode(en, this->PlusMinus(parens));
+                break;
+            default:
+                return en;
+            }
+        }
+    } else {
+        return en;
+    }
+}
+
+ExpressionNode* Parser::PlusMinus(bool parens) {
+    ExpressionNode* en = this->TimesDivide(parens);
+
+    for (;;) {
+        TokenType t = this->scanner->PeekNextToken().GetTokenType();
+        switch (t) {
+        case PLUS_TOKEN:
+            this->Match(t);
+            en = new PlusNode(en, this->TimesDivide(parens));
+            break;
+        case MINUS_TOKEN:
+            this->Match(t);
+            en = new MinusNode(en, this->TimesDivide(parens));
+            break;
+        default:
+            return en;
+        }
+    }
+}
+
+ExpressionNode* Parser::TimesDivide(bool parens) {
+    ExpressionNode* en = this->Exponent(parens);
+
+    for (;;) {
+        TokenType t = this->scanner->PeekNextToken().GetTokenType();
+        switch (t) {
+        case MULTIPLY_TOKEN:
+            this->Match(t);
+            en = new TimesNode(en, this->Exponent(parens));
+            break;
+        case DIVIDE_TOKEN:
+            this->Match(t);
+            en = new DivideNode(en, this->Exponent(parens));
+            break;
+        default:
+            return en;
+        }
+    }
+}
+
+ExpressionNode* Parser::Exponent(bool parens) {
+    ExpressionNode* en = this->Factor(parens);
+
+    for (;;) {
+        TokenType t = this->scanner->PeekNextToken().GetTokenType();
+        switch (t) {
+        case EXPONENT_TOKEN:
+            this->Match(t);
+            en = new ExponentNode(en, this->Factor(parens));
+            break;
+        default:
+            return en;
+        }
+    }
+}
+
+ExpressionNode* Parser::Factor(bool parens) {
     ExpressionNode* en;
     TokenType t = this->scanner->PeekNextToken().GetTokenType();
     switch (t) {
     case NOT_TOKEN:
         this->Match(t);
-        en = new NotNode(this->Expression());
+        en = new NotNode(this->Expression(parens));
         break;
     case TRUE_TOKEN:
         this->Match(t);
@@ -484,7 +485,7 @@ ExpressionNode* Parser::Factor() {
         break;
     case NEGATIVE_TOKEN:
         this->Match(t);
-        en = new NegativeNode(this->Expression());
+        en = new NegativeNode(this->Expression(parens));
         break;
     case IDENTIFIER_TOKEN:
         en = this->Identifier();
@@ -494,11 +495,12 @@ ExpressionNode* Parser::Factor() {
         break;
     case LEFT_PAREN_TOKEN:
         this->Match(LEFT_PAREN_TOKEN);
-        en = this->Expression();
+        en = this->Expression(true);
         this->Match(RIGHT_PAREN_TOKEN);
         break;
     default:
         std::cerr << "Error: expected factor type, got " << Token::GetTokenTypeName(t) << std::endl;
+        std::cerr << this->scanner->PeekNextToken() << std::endl;
         exit(EXIT_FAILURE);
     }
     return en;

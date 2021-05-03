@@ -27,8 +27,8 @@ void ProgramNode::Interpret() {
     this->blockNode->Interpret();
 }
 
-BlockNode::BlockNode(StatementGroupNode* sgn)
-    : sgNode(sgn) {}
+BlockNode::BlockNode(StatementGroupNode* sgn, SymbolTable* table)
+    : sgNode(sgn), table(table) {}
 BlockNode::~BlockNode() {
     delete this->sgNode;
 }
@@ -36,7 +36,9 @@ void BlockNode::Code(InstructionsClass& machineCode) {
     this->sgNode->Code(machineCode);
 }
 void BlockNode::Interpret() {
+    this->table->NewScope();
     this->sgNode->Interpret();
+    this->table->LeaveScope();
 }
 
 StatementGroupNode::StatementGroupNode()

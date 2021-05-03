@@ -2,6 +2,7 @@
 #define KEYWORD_H
 
 #include <vector>
+#include "../symbol.h"
 #include "base.h"
 #include "value.h"
 
@@ -43,12 +44,14 @@ protected:
     ExpressionNode* comparison;
     StatementNode* incrementer;
     BlockNode* blockNode;
+    SymbolTable* table;
 public:
     ForStatementNode(
         StatementNode* initializer,
         ExpressionNode* comparison,
         StatementNode* incrementer,
-        BlockNode* bn);
+        BlockNode* bn,
+        SymbolTable* table);
     ~ForStatementNode();
 
     void Interpret();
@@ -62,7 +65,8 @@ public:
         StatementNode* initializer,
         ExpressionNode* comparison,
         StatementNode* incrementer,
-        BlockNode* bn);
+        BlockNode* bn,
+        SymbolTable* table);
 
     void Interpret();
     void Code(InstructionsClass& machineCode);

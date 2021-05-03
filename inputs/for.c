@@ -13,7 +13,10 @@ void main() {
       cout << 2 << endl;
    }
 
+   cout << 000 << endl;
+
    fore(int i = 0; i < 5; i++) {
-      cout << 3 << endl;
+      x++;
+      cout << x << endl;
    }
 }

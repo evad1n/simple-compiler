@@ -52,11 +52,13 @@ ForStatementNode::ForStatementNode(
     StatementNode* initializer,
     ExpressionNode* comparison,
     StatementNode* incrementer,
-    BlockNode* bn)
+    BlockNode* bn,
+    SymbolTable* table)
     : initializer(initializer),
     comparison(comparison),
     incrementer(incrementer),
-    blockNode(bn) {}
+    blockNode(bn),
+    table(table) {}
 ForStatementNode::~ForStatementNode() {
     delete this->initializer;
     delete this->comparison;
@@ -64,23 +66,27 @@ ForStatementNode::~ForStatementNode() {
     delete this->blockNode;
 }
 void ForStatementNode::Interpret() {
+    this->table->NewScope();
     this->initializer->Interpret();
     while (this->comparison->Evaluate()) {
         this->blockNode->Interpret();
         this->incrementer->Interpret();
     }
+    this->table->LeaveScope();
 }
 void ForStatementNode::Code(InstructionsClass& machineCode) {
-    // FIX:
+
 }
 
 ForeStatementNode::ForeStatementNode(
     StatementNode* initializer,
     ExpressionNode* comparison,
     StatementNode* incrementer,
-    BlockNode* bn)
-    : ForStatementNode(initializer, comparison, incrementer, blockNode) {}
+    BlockNode* bn,
+    SymbolTable* table)
+    : ForStatementNode(initializer, comparison, incrementer, bn, table) {}
 void ForeStatementNode::Interpret() {
+    this->table->NewScope();
     this->initializer->Interpret();
     while (this->comparison->Evaluate()) {
         for (int i = 0; i < 4; i++) {
@@ -88,6 +94,7 @@ void ForeStatementNode::Interpret() {
         }
         this->incrementer->Interpret();
     }
+    this->table->LeaveScope();
 }
 void ForeStatementNode::Code(InstructionsClass& machineCode) {
 
