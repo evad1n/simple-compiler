@@ -6,7 +6,7 @@
 
 const std::string gTokenTypeNames[] = {
     // Reserved words
-    "VOID", "MAIN", "TRUE", "FALSE", "INT", "COUT", "CIN", "ENDL", "IF", "ELSE", "WHILE", "FOR", "FORE","RESERVED_COUNT",
+    "VOID", "MAIN", "TRUE", "FALSE", "AND" , "OR", "DO", "INT", "COUT", "CIN", "ENDL", "IF", "ELSE", "WHILE", "FOR", "FORE","RESERVED_COUNT",
     // Scope tokens
     "SEMICOLON",
     "LEFT_PAREN", "RIGHT_PAREN",
@@ -71,6 +71,10 @@ void Token::CheckReserved() {
             this->type = TokenType(i);
         }
     }
+    // if (this->lexeme == "and")
+    //     this->type = AND_TOKEN;
+    // if (this->lexeme == "or")
+    //     this->type = OR_TOKEN;
 }
 
 std::ostream& operator <<(std::ostream& out, const Token& tc) {

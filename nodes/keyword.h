@@ -29,10 +29,22 @@ public:
 class WhileStatementNode : public StatementNode {
 private:
     ExpressionNode* expNode;
-    BlockNode* blockNode;
+    StatementNode* sn;
 public:
-    WhileStatementNode(ExpressionNode* en, BlockNode* bn);
+    WhileStatementNode(ExpressionNode* en, StatementNode* sn);
     ~WhileStatementNode();
+
+    void Interpret();
+    void Code(InstructionsClass& machineCode);
+};
+
+class DoWhileStatementNode : public StatementNode {
+private:
+    ExpressionNode* expNode;
+    StatementNode* sn;
+public:
+    DoWhileStatementNode(ExpressionNode* en, StatementNode* sn);
+    ~DoWhileStatementNode();
 
     void Interpret();
     void Code(InstructionsClass& machineCode);

@@ -24,15 +24,15 @@ void IfElseStatementNode::Code(InstructionsClass& machineCode) {
     machineCode.SetOffset(insertAddress, (int)(address2 - address1));
 }
 
-WhileStatementNode::WhileStatementNode(ExpressionNode* en, BlockNode* bn)
-    : expNode(en), blockNode(bn) {}
+WhileStatementNode::WhileStatementNode(ExpressionNode* en, StatementNode* sn)
+    : expNode(en), sn(sn) {}
 WhileStatementNode::~WhileStatementNode() {
     delete this->expNode;
-    delete this->blockNode;
+    delete this->sn;
 }
 void WhileStatementNode::Interpret() {
     while (this->expNode->Evaluate()) {
-        this->blockNode->Interpret();
+        this->sn->Interpret();
     }
 }
 void WhileStatementNode::Code(InstructionsClass& machineCode) {
@@ -40,13 +40,36 @@ void WhileStatementNode::Code(InstructionsClass& machineCode) {
     this->expNode->CodeEvaluate(machineCode);
     unsigned char* insertAddressSkip = machineCode.SkipIfZeroStack();
     unsigned char* address2 = machineCode.GetAddress();
-    this->blockNode->Code(machineCode);
+    this->sn->Code(machineCode);
     unsigned char* insertAddressJump = machineCode.Jump();
     unsigned char* address3 = machineCode.GetAddress();
     machineCode.SetOffset(insertAddressSkip, (int)(address3 - address2));
     machineCode.SetOffset(insertAddressJump, (int)(address1 - address3));
 }
 
+DoWhileStatementNode::DoWhileStatementNode(ExpressionNode* en, StatementNode
+    * sn)
+    : expNode(en), sn(sn) {}
+DoWhileStatementNode::~DoWhileStatementNode() {
+    delete this->expNode;
+    delete this->sn;
+}
+void DoWhileStatementNode::Interpret() {
+    do {
+        this->sn->Interpret();
+    } while (this->expNode->Evaluate());
+}
+void DoWhileStatementNode::Code(InstructionsClass& machineCode) {
+    unsigned char* address1 = machineCode.GetAddress();
+    this->sn->Code(machineCode);
+    this->expNode->CodeEvaluate(machineCode);
+    unsigned char* insertAddressSkip = machineCode.SkipIfZeroStack();
+    unsigned char* address2 = machineCode.GetAddress();
+    unsigned char* insertAddressJump = machineCode.Jump();
+    unsigned char* address3 = machineCode.GetAddress();
+    machineCode.SetOffset(insertAddressSkip, (int)(address3 - address2));
+    machineCode.SetOffset(insertAddressJump, (int)(address1 - address3));
+}
 
 ForStatementNode::ForStatementNode(
     StatementNode* initializer,

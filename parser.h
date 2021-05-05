@@ -23,6 +23,7 @@ private:
     StatementNode* AssignmentStatement(bool semicolon = true);
     IfElseStatementNode* IfElseStatement();
     WhileStatementNode* WhileStatement();
+    DoWhileStatementNode* DoWhileStatement();
     ForStatementNode* ForStatement();
     ForeStatementNode* ForeStatement();
     CoutStatementNode* CoutStatement();

@@ -68,6 +68,8 @@ StatementNode* Parser::Statement() {
         return this->IfElseStatement();
     case WHILE_TOKEN:
         return this->WhileStatement();
+    case DO_TOKEN:
+        return this->DoWhileStatement();
     case FOR_TOKEN:
         return this->ForStatement();
     case FORE_TOKEN:
@@ -200,8 +202,19 @@ WhileStatementNode* Parser::WhileStatement() {
     this->Match(LEFT_PAREN_TOKEN);
     ExpressionNode* en = this->Expression();
     this->Match(RIGHT_PAREN_TOKEN);
-    BlockNode* bn = this->Block();
-    return new WhileStatementNode(en, bn);
+    StatementNode* sn = this->Statement();
+    return new WhileStatementNode(en, sn);
+}
+
+DoWhileStatementNode* Parser::DoWhileStatement() {
+    this->Match(DO_TOKEN);
+    StatementNode* sn = this->Statement();
+    this->Match(WHILE_TOKEN);
+    this->Match(LEFT_PAREN_TOKEN);
+    ExpressionNode* en = this->Expression();
+    this->Match(RIGHT_PAREN_TOKEN);
+    this->Match(SEMICOLON_TOKEN);
+    return new DoWhileStatementNode(en, sn);
 }
 
 ForStatementNode* Parser::ForStatement() {
